@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.br.CPF;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class RegisterInputDto {
     @NotBlank(message = "The name field cannot be empty")
     private String name;
