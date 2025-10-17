@@ -1,8 +1,7 @@
 package com.nimble.gateway_payment.user.valueObjects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CpfTest {
 
@@ -40,5 +39,16 @@ public class CpfTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Cpf("11111111111"));
         assertEquals("CPF inválid.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnCPFValid(){
+      Cpf cpf1 =  new Cpf("64717564294");
+      Cpf cpf2 =  new Cpf("38485789300");
+      Cpf cpf3 =  new Cpf("11501002902");
+
+      assertEquals("64717564294", cpf1.getValue());
+      assertEquals("38485789300", cpf2.getValue());
+      assertEquals("11501002902", cpf3.getValue());
     }
 }
