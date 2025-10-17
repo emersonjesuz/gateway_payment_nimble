@@ -19,4 +19,11 @@ public class CpfTest {
                 () -> new Cpf("111.111.111-30"));
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnAnErrorIfCPFNot11NumericDigits (){
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new Cpf("11111111"));
+        assertEquals("The CPF must contain exactly 11 numeric digits.", exception.getMessage());
+    }
 }
