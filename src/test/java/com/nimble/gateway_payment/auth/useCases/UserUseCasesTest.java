@@ -35,4 +35,12 @@ public class UserUseCasesTest {
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
 
+    @Test
+    public void shouldReturnAnErrorIfCPFHasInvalidCharacter() {
+        RegisterInputDto dto = RegisterInputDto.builder().cpf("111.222.333.10").build();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            this.authUseCase.register(dto);
+        });
+        assertEquals("The CPF must contain only numbers.", exception.getMessage());
+    }
 }
