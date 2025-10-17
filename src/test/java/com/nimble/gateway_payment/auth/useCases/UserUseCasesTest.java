@@ -43,4 +43,13 @@ public class UserUseCasesTest {
         });
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnAnErrorIfCPFNot11NumericDigits() {
+        RegisterInputDto dto = RegisterInputDto.builder().cpf("1122233310").build();
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            this.authUseCase.register(dto);
+        });
+        assertEquals("The CPF must contain exactly 11 numeric digits.", exception.getMessage());
+    }
 }
