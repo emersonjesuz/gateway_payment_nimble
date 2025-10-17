@@ -13,16 +13,14 @@ public class AuthUseCase {
     private PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
 
-    public AuthUseCase (UserRepository userRepository){
+    public AuthUseCase(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public void register (RegisterInputDto dto){
+    public void register(RegisterInputDto dto) {
         Cpf cpf = new Cpf(dto.getCpf());
-
         if (this.userRepository.findByEmailOrCPF(dto.getEmail(), cpf.getValue()).isPresent()) {
-            throw new RuntimeException("User already exists");
+            throw new IllegalArgumentException("User already exists");
         }
-
     }
 }
