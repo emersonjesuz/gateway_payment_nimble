@@ -8,11 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -21,6 +22,9 @@ public class UserUseCasesTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AuthUseCase authUseCase;
@@ -63,7 +67,6 @@ public class UserUseCasesTest {
 
     @Test
     public void shouldReturnAnErrorIfExistsUserWithEmailOrCpf() {
-
         RegisterInputDto dto = RegisterInputDto.builder()
                 .email("josi@email.com")
                 .cpf("64717564294")
@@ -76,13 +79,37 @@ public class UserUseCasesTest {
                 .password("josi123")
                 .build();
 
-        when(userRepository.findByEmailOrCPF(anyString(), anyString()))
+        when(this.userRepository.findByEmailOrCPF(anyString(), anyString()))
                 .thenReturn(Optional.of(user));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            authUseCase.register(dto);
+            this.authUseCase.register(dto);
         });
 
         assertEquals("User already exists", exception.getMessage());
+    }
+
+    @Test
+    public void shouldNotReturnAnErrorIfEverythingIsCorrect() {
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .password("password1234")
+                .build();
+
+        UserEntity user = UserEntity.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .name("josi")
+                .password("josi123")
+                .build();
+
+        when(this.userRepository.findByEmailOrCPF(anyString(), anyString()))
+                .thenReturn(Optional.empty());
+        when(this.passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
+        when(this.userRepository.save(any(UserEntity.class)))
+                .thenReturn(user);
+
+        assertDoesNotThrow(() -> authUseCase.register(dto));
     }
 }
