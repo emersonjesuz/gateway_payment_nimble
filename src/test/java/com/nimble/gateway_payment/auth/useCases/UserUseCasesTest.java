@@ -1,30 +1,29 @@
 package com.nimble.gateway_payment.auth.useCases;
 
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
+import com.nimble.gateway_payment.user.entities.UserEntity;
 import com.nimble.gateway_payment.user.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserUseCasesTest {
-    @InjectMocks
-    private AuthUseCase authUseCase;
 
     @Mock
     private UserRepository userRepository;
 
-    @BeforeEach
-    public void beforeEach() {
-        MockitoAnnotations.openMocks(this);
-    }
+    @InjectMocks
+    private AuthUseCase authUseCase;
 
     @Test
     public void shouldReturnAnErrorIfCpfIsNull() {
@@ -60,5 +59,30 @@ public class UserUseCasesTest {
             this.authUseCase.register(dto);
         });
         assertEquals("CPF inválid.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnAnErrorIfExistsUserWithEmailOrCpf() {
+
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .build();
+
+        UserEntity user = UserEntity.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .name("josi")
+                .password("josi123")
+                .build();
+
+        when(userRepository.findByEmailOrCPF(anyString(), anyString()))
+                .thenReturn(Optional.of(user));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            authUseCase.register(dto);
+        });
+
+        assertEquals("User already exists", exception.getMessage());
     }
 }
