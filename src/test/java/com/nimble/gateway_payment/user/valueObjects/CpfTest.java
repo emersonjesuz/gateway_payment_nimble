@@ -12,4 +12,11 @@ public class CpfTest {
                 () -> new Cpf(null));
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnAnErrorIfCPFHasInvalidCharacter (){
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new Cpf("111.111.111-30"));
+        assertEquals("The CPF must contain only numbers.", exception.getMessage());
+    }
 }
