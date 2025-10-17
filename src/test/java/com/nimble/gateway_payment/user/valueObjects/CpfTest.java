@@ -22,9 +22,17 @@ public class CpfTest {
 
     @Test
     public void shouldReturnAnErrorIfCPFNot11NumericDigits(){
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf("11111111"));
-        assertEquals("The CPF must contain exactly 11 numeric digits.", exception.getMessage());
+        var cpfWith9Digits = "123456789";
+        var cpfWith12Digits = "123456789012";
+
+        IllegalArgumentException firstException = assertThrows(IllegalArgumentException.class,
+                () -> new Cpf(cpfWith9Digits));
+
+        IllegalArgumentException secondException = assertThrows(IllegalArgumentException.class,
+                () -> new Cpf(cpfWith12Digits));
+
+        assertEquals("The CPF must contain exactly 11 numeric digits.", firstException.getMessage());
+        assertEquals("The CPF must contain exactly 11 numeric digits.", secondException.getMessage());
     }
 
     @Test
