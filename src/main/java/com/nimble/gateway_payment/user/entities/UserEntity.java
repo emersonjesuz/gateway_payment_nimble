@@ -1,11 +1,13 @@
 package com.nimble.gateway_payment.user.entities;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "users")
+@Data
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
