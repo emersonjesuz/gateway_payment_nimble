@@ -79,16 +79,14 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void shouldReturn400IfCpfInvalid() {
-        String cpfWith12Digits = "123456789012";
+    public void shouldReturn400IfPasswordNotInformed() {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@email.com")
-                .cpf(cpfWith12Digits)
-                .password("password1234")
+                .cpf("64717564294")
                 .build();
         ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
         assertEquals(400, response.status());
-        assertEquals("The CPF field cannot be invalid", response.message());
+        assertEquals("The password field cannot be empty", response.message());
     }
 }
