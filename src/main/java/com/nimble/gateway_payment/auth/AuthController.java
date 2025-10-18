@@ -1,6 +1,5 @@
-package com.nimble.gateway_payment.auth.controllers;
+package com.nimble.gateway_payment.auth;
 
-import com.nimble.gateway_payment.auth.AuthUseCase;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
 import jakarta.validation.Valid;
