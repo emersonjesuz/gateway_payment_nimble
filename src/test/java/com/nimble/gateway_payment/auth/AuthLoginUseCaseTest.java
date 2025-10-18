@@ -52,4 +52,13 @@ public class AuthLoginUseCaseTest {
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier or password incorrect.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnErrorIfNotFindUserByIdentifierCpf() {
+        LoginInputDto dto = new LoginInputDto("11122233344", "password");
+        when(this.userRepository.findByEmailOrCpf(any(), any())).thenReturn(Optional.empty());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> this.authUseCase.login(dto));
+        assertEquals("Identifier or password incorrect.", exception.getMessage());
+    }
 }
