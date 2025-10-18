@@ -1,4 +1,4 @@
-package com.nimble.gateway_payment.auth.useCases;
+package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.user.entities.UserEntity;

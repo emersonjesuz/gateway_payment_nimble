@@ -1,8 +1,8 @@
 package com.nimble.gateway_payment.auth.controllers;
 
+import com.nimble.gateway_payment.auth.AuthUseCase;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
-import com.nimble.gateway_payment.auth.useCases.AuthUseCase;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
