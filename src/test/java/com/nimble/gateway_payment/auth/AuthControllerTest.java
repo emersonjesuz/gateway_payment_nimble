@@ -51,4 +51,16 @@ public class AuthControllerTest {
         assertEquals(400, response.status());
         assertEquals("The email field cannot be invalid", response.message());
     }
+
+    @Test
+    public void shouldReturn400IfCpfNotInformed() {
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi@email.com")
+                .password("password1234")
+                .build();
+        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
+        assertEquals(400, response.status());
+        assertEquals("The CPF field cannot be empty", response.message());
+    }
 }
