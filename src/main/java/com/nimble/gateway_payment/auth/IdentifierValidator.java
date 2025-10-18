@@ -21,6 +21,8 @@ public class IdentifierValidator {
             this.cpf = value;
             return;
         }
+
+        throw new IllegalArgumentException("Identifier invalid.");
     }
 
 }
