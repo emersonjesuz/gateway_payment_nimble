@@ -1,11 +1,14 @@
 package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
+import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
 import com.nimble.gateway_payment.shared.exceptions.ErrorResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -114,5 +117,19 @@ public class AuthControllerTest {
         ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
         assertEquals(400, response.status());
         assertEquals("The CPF must contain only numbers.", response.message());
+    }
+
+    @Test
+    public void shouldReturn200IfUserRegisterSuccess() {
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("64717564294")
+                .password("123456")
+                .build();
+        ResponseEntity<RegisterOutputDto> response = this.restTemplate.postForEntity("/auth/register", dto, RegisterOutputDto.class);
+        System.out.println(response.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User created with success.", response.getBody().message());
     }
 }
