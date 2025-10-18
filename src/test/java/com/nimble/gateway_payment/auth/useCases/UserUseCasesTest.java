@@ -79,7 +79,7 @@ public class UserUseCasesTest {
                 .password("josi123")
                 .build();
 
-        when(this.userRepository.findByEmailOrCPF(anyString(), anyString()))
+        when(this.userRepository.findByEmailOrCpf(anyString(), anyString()))
                 .thenReturn(Optional.of(user));
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -104,7 +104,7 @@ public class UserUseCasesTest {
                 .password("josi123")
                 .build();
 
-        when(this.userRepository.findByEmailOrCPF(anyString(), anyString()))
+        when(this.userRepository.findByEmailOrCpf(anyString(), anyString()))
                 .thenReturn(Optional.empty());
         when(this.passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
         when(this.userRepository.save(any(UserEntity.class)))

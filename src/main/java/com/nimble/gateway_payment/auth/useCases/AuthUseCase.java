@@ -19,7 +19,7 @@ public class AuthUseCase {
 
     public void register(RegisterInputDto dto) {
         Cpf cpf = new Cpf(dto.getCpf());
-        if (this.userRepository.findByEmailOrCPF(dto.getEmail(), cpf.getValue()).isPresent()) {
+        if (this.userRepository.findByEmailOrCpf(dto.getEmail(), cpf.getValue()).isPresent()) {
             throw new IllegalArgumentException("User already exists");
         }
         var passwordHash = this.passwordEncoder.encode(dto.getPassword());
