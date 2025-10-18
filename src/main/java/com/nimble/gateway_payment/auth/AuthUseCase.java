@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.auth;
 
+import com.nimble.gateway_payment.auth.dtos.LoginInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;
@@ -30,5 +31,9 @@ public class AuthUseCase {
                 .password(passwordHash)
                 .build();
         this.userRepository.save(user);
+    }
+
+    public void login(LoginInputDto dto) {
+        new IdentifierValidator(dto.getIdentifier());
     }
 }
