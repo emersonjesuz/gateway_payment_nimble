@@ -20,6 +20,16 @@ public class AuthControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    private void createUserInDatabase(String name, String email, String cpf, String password) {
+        RegisterInputDto userRegister = RegisterInputDto.builder()
+                .name(name)
+                .email(email)
+                .cpf(cpf)
+                .password(password)
+                .build();
+        this.restTemplate.postForEntity("/auth/register", userRegister, ErrorResponse.class);
+    }
+
     @Test
     public void shouldReturn400IfNameNotInformed() {
         RegisterInputDto dto = RegisterInputDto.builder()
@@ -122,6 +132,21 @@ public class AuthControllerTest {
     }
 
     @Test
+    public void shouldReturn400IfExistsUserWithCpf() {
+        this.createUserInDatabase("josi", "jos@email.com", "11501002902", "123456");
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josiemerson@email.com")
+                .cpf("11501002902")
+                .password("123456")
+                .build();
+        ResponseEntity<ErrorResponse> response = this.restTemplate.postForEntity("/auth/register", dto, ErrorResponse.class);
+        System.out.println(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("User already exists", response.getBody().message());
+    }
+
+    @Test
     public void shouldReturn200IfUserRegisterSuccess() {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
@@ -130,7 +155,6 @@ public class AuthControllerTest {
                 .password("123456")
                 .build();
         ResponseEntity<RegisterOutputDto> response = this.restTemplate.postForEntity("/auth/register", dto, RegisterOutputDto.class);
-        System.out.println(response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User created with success.", response.getBody().message());
     }
