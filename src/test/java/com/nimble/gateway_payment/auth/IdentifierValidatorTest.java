@@ -13,4 +13,10 @@ public class IdentifierValidatorTest {
                 () -> new IdentifierValidator(""));
         assertEquals("Identifier is not empty.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnNullIfIdentifyIsNotEmail() {
+        IdentifierValidator identifier = new IdentifierValidator("notEmail");
+        assertEquals(null, identifier.getEmail());
+    }
 }
