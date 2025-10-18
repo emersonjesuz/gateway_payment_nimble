@@ -19,4 +19,10 @@ public class IdentifierValidatorTest {
         IdentifierValidator identifier = new IdentifierValidator("notEmail");
         assertEquals(null, identifier.getEmail());
     }
+
+    @Test
+    public void shouldReturnEmailIfIdentifyIsEmail() {
+        IdentifierValidator identifier = new IdentifierValidator("josi@email.com");
+        assertEquals("josi@email.com", identifier.getEmail());
+    }
 }
