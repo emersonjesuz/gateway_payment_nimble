@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.user.entities;
 
+import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,5 +25,12 @@ public class UserEntity {
     @Column(unique = true)
     private String email;
     private String password;
+
+    public UserEntity(RegisterInputDto dto) {
+        this.name = dto.getName();
+        this.email = dto.getEmail();
+        this.cpf = dto.getCpf();
+        this.password = dto.getPassword();
+    }
 }
 
