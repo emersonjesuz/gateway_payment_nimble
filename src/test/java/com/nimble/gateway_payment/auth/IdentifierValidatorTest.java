@@ -31,4 +31,10 @@ public class IdentifierValidatorTest {
         IdentifierValidator identifier = new IdentifierValidator("notCpf");
         assertEquals(null, identifier.getCpf());
     }
+
+    @Test
+    public void shouldReturnCpfIfIdentifyIsCpf() {
+        IdentifierValidator identifier = new IdentifierValidator("12345678912");
+        assertEquals("12345678912", identifier.getCpf());
+    }
 }
