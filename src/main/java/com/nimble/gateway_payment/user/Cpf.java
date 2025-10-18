@@ -1,4 +1,4 @@
-package com.nimble.gateway_payment.user.valueObjects;
+package com.nimble.gateway_payment.user;
 
 public class Cpf {
     private final String value;

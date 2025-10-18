@@ -1,4 +1,4 @@
-package com.nimble.gateway_payment.user.entities;
+package com.nimble.gateway_payment.user;
 
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import jakarta.persistence.*;

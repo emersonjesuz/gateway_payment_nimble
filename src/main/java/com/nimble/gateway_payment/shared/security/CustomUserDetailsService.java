@@ -1,7 +1,7 @@
 package com.nimble.gateway_payment.shared.security;
 
-import com.nimble.gateway_payment.user.entities.UserEntity;
-import com.nimble.gateway_payment.user.repositories.UserRepository;
+import com.nimble.gateway_payment.user.UserEntity;
+import com.nimble.gateway_payment.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

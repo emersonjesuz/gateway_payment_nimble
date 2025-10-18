@@ -1,26 +1,29 @@
 package com.nimble.gateway_payment.user.valueObjects;
 
+import com.nimble.gateway_payment.user.Cpf;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class CpfTest {
 
     @Test
-    public void shouldReturnAnErrorIfCpfIsNull(){
+    public void shouldReturnAnErrorIfCpfIsNull() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Cpf(null));
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
 
     @Test
-    public void shouldReturnAnErrorIfCPFHasInvalidCharacter(){
+    public void shouldReturnAnErrorIfCPFHasInvalidCharacter() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Cpf("111.111.111-30"));
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
     }
 
     @Test
-    public void shouldReturnAnErrorIfCPFNot11NumericDigits(){
+    public void shouldReturnAnErrorIfCPFNot11NumericDigits() {
         var cpfWith9Digits = "123456789";
         var cpfWith12Digits = "123456789012";
 
@@ -35,20 +38,20 @@ public class CpfTest {
     }
 
     @Test
-    public void shouldReturnAnErrorIfCPFInvalid(){
+    public void shouldReturnAnErrorIfCPFInvalid() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new Cpf("11111111111"));
         assertEquals("CPF inválid.", exception.getMessage());
     }
 
     @Test
-    public void shouldReturnCPFValid(){
-      Cpf cpf1 =  new Cpf("64717564294");
-      Cpf cpf2 =  new Cpf("38485789300");
-      Cpf cpf3 =  new Cpf("11501002902");
+    public void shouldReturnCPFValid() {
+        Cpf cpf1 = new Cpf("64717564294");
+        Cpf cpf2 = new Cpf("38485789300");
+        Cpf cpf3 = new Cpf("11501002902");
 
-      assertEquals("64717564294", cpf1.getValue());
-      assertEquals("38485789300", cpf2.getValue());
-      assertEquals("11501002902", cpf3.getValue());
+        assertEquals("64717564294", cpf1.getValue());
+        assertEquals("38485789300", cpf2.getValue());
+        assertEquals("11501002902", cpf3.getValue());
     }
 }

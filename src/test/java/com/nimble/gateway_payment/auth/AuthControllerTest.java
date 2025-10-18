@@ -3,7 +3,7 @@ package com.nimble.gateway_payment.auth;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
 import com.nimble.gateway_payment.shared.exceptions.ErrorResponse;
-import com.nimble.gateway_payment.user.repositories.UserRepository;
+import com.nimble.gateway_payment.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

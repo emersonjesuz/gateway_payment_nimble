@@ -1,8 +1,8 @@
 package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
-import com.nimble.gateway_payment.user.entities.UserEntity;
-import com.nimble.gateway_payment.user.repositories.UserRepository;
+import com.nimble.gateway_payment.user.UserEntity;
+import com.nimble.gateway_payment.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

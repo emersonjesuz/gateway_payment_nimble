@@ -1,6 +1,5 @@
-package com.nimble.gateway_payment.user.repositories;
+package com.nimble.gateway_payment.user;
 
-import com.nimble.gateway_payment.user.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
