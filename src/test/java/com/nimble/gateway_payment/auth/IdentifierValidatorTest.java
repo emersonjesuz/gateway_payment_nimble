@@ -25,4 +25,10 @@ public class IdentifierValidatorTest {
         IdentifierValidator identifier = new IdentifierValidator("josi@email.com");
         assertEquals("josi@email.com", identifier.getEmail());
     }
+
+    @Test
+    public void shouldReturnNullIfIdentifyIsNotCpf() {
+        IdentifierValidator identifier = new IdentifierValidator("notCpf");
+        assertEquals(null, identifier.getCpf());
+    }
 }
