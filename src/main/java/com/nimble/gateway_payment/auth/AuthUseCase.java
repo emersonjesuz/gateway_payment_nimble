@@ -34,6 +34,8 @@ public class AuthUseCase {
     }
 
     public void login(LoginInputDto dto) {
-        new IdentifierValidator(dto.getIdentifier());
+        IdentifierValidator identifier = new IdentifierValidator(dto.getIdentifier());
+        this.userRepository.findByEmailOrCpf(identifier.getEmail(), identifier.getCpf())
+                .orElseThrow(() -> new IllegalArgumentException("Identifier or password incorrect."));
     }
 }
