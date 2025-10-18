@@ -89,4 +89,17 @@ public class AuthControllerTest {
         assertEquals(400, response.status());
         assertEquals("The password field cannot be empty", response.message());
     }
+
+    @Test
+    public void shouldReturn400IfPasswordHasLessThan6Digits() {
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .password("12345")
+                .build();
+        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
+        assertEquals(400, response.status());
+        assertEquals("The Password field must have at least 6 digits", response.message());
+    }
 }
