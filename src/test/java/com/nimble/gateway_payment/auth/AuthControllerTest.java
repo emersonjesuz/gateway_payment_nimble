@@ -1,0 +1,29 @@
+package com.nimble.gateway_payment.auth;
+
+import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
+import com.nimble.gateway_payment.shared.exceptions.ErrorResponse;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class AuthControllerTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Test
+    public void shouldReturn400IfNameNotInformed() {
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .password("password1234")
+                .build();
+        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
+        assertEquals(400, response.status());
+        assertEquals("The name field cannot be empty", response.message());
+    }
+}
