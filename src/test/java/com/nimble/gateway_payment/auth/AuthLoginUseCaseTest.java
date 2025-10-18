@@ -9,8 +9,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthLoginUseCaseTest {
@@ -38,5 +42,14 @@ public class AuthLoginUseCaseTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier invalid.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorIfNotFindUserByIdentifierEmail() {
+        LoginInputDto dto = new LoginInputDto("josi@email.com", "password");
+        when(this.userRepository.findByEmailOrCpf(any(), any())).thenReturn(Optional.empty());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> this.authUseCase.login(dto));
+        assertEquals("Identifier or password incorrect.", exception.getMessage());
     }
 }
