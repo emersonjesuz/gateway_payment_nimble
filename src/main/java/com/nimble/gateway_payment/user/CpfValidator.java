@@ -1,9 +1,9 @@
 package com.nimble.gateway_payment.user;
 
-public class Cpf {
+public class CpfValidator {
     private final String value;
 
-    public Cpf(String value) {
+    public CpfValidator(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The CPF cannot be null.");
         }

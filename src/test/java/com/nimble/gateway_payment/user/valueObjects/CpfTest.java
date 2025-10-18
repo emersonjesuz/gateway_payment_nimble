@@ -1,6 +1,6 @@
 package com.nimble.gateway_payment.user.valueObjects;
 
-import com.nimble.gateway_payment.user.Cpf;
+import com.nimble.gateway_payment.user.CpfValidator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -11,14 +11,14 @@ public class CpfTest {
     @Test
     public void shouldReturnAnErrorIfCpfIsNull() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf(null));
+                () -> new CpfValidator(null));
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
 
     @Test
     public void shouldReturnAnErrorIfCPFHasInvalidCharacter() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf("111.111.111-30"));
+                () -> new CpfValidator("111.111.111-30"));
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
     }
 
@@ -28,10 +28,10 @@ public class CpfTest {
         var cpfWith12Digits = "123456789012";
 
         IllegalArgumentException firstException = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf(cpfWith9Digits));
+                () -> new CpfValidator(cpfWith9Digits));
 
         IllegalArgumentException secondException = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf(cpfWith12Digits));
+                () -> new CpfValidator(cpfWith12Digits));
 
         assertEquals("The CPF must contain exactly 11 numeric digits.", firstException.getMessage());
         assertEquals("The CPF must contain exactly 11 numeric digits.", secondException.getMessage());
@@ -40,15 +40,15 @@ public class CpfTest {
     @Test
     public void shouldReturnAnErrorIfCPFInvalid() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new Cpf("11111111111"));
+                () -> new CpfValidator("11111111111"));
         assertEquals("CPF inválid.", exception.getMessage());
     }
 
     @Test
     public void shouldReturnCPFValid() {
-        Cpf cpf1 = new Cpf("64717564294");
-        Cpf cpf2 = new Cpf("38485789300");
-        Cpf cpf3 = new Cpf("11501002902");
+        CpfValidator cpf1 = new CpfValidator("64717564294");
+        CpfValidator cpf2 = new CpfValidator("38485789300");
+        CpfValidator cpf3 = new CpfValidator("11501002902");
 
         assertEquals("64717564294", cpf1.getValue());
         assertEquals("38485789300", cpf2.getValue());
