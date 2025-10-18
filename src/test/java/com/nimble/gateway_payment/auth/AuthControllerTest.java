@@ -3,6 +3,8 @@ package com.nimble.gateway_payment.auth;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
 import com.nimble.gateway_payment.shared.exceptions.ErrorResponse;
+import com.nimble.gateway_payment.user.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class AuthControllerTest {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TestRestTemplate restTemplate;
+
+    @BeforeEach
+    void cleanDatabase() {
+        userRepository.deleteAll();
+    }
 
     private void createUserInDatabase(String name, String email, String cpf, String password) {
         RegisterInputDto userRegister = RegisterInputDto.builder()
@@ -147,11 +157,26 @@ public class AuthControllerTest {
     }
 
     @Test
+    public void shouldReturn400IfExistsUserWithEmail() {
+        this.createUserInDatabase("josi", "josiemerson@email.com", "11501002902", "123456");
+        RegisterInputDto dto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josiemerson@email.com")
+                .cpf("64717564294")
+                .password("123456")
+                .build();
+        ResponseEntity<ErrorResponse> response = this.restTemplate.postForEntity("/auth/register", dto, ErrorResponse.class);
+        System.out.println(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("User already exists", response.getBody().message());
+    }
+
+    @Test
     public void shouldReturn200IfUserRegisterSuccess() {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi1@email.com")
-                .cpf("64717564294")
+                .cpf("38485789300")
                 .password("123456")
                 .build();
         ResponseEntity<RegisterOutputDto> response = this.restTemplate.postForEntity("/auth/register", dto, RegisterOutputDto.class);
