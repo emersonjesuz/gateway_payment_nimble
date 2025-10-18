@@ -1,8 +1,8 @@
 package com.nimble.gateway_payment.auth.dtos;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class RegisterInputDto {
     @NotBlank(message = "The CPF field cannot be empty")
     @CPF(message = "The CPF field cannot be invalid")
     private String cpf;
-    @NotBlank(message = "The name field cannot be empty")
-    @Min(value = 6, message = "The Password field must have at least 6 digits")
+    @NotBlank(message = "The password field cannot be empty")
+    @Size(min = 6, message = "The Password field must have at least 6 digits")
     private String password;
 }
