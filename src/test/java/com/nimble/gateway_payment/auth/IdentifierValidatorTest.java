@@ -16,7 +16,7 @@ public class IdentifierValidatorTest {
 
     @Test
     public void shouldReturnNullIfIdentifyIsNotEmail() {
-        IdentifierValidator identifier = new IdentifierValidator("notEmail");
+        IdentifierValidator identifier = new IdentifierValidator("12345678912");
         assertEquals(null, identifier.getEmail());
     }
 
@@ -28,7 +28,7 @@ public class IdentifierValidatorTest {
 
     @Test
     public void shouldReturnNullIfIdentifyIsNotCpf() {
-        IdentifierValidator identifier = new IdentifierValidator("notCpf");
+        IdentifierValidator identifier = new IdentifierValidator("josi@email.com");
         assertEquals(null, identifier.getCpf());
     }
 
@@ -36,5 +36,12 @@ public class IdentifierValidatorTest {
     public void shouldReturnCpfIfIdentifyIsCpf() {
         IdentifierValidator identifier = new IdentifierValidator("12345678912");
         assertEquals("12345678912", identifier.getCpf());
+    }
+
+    @Test
+    public void shouldReturnErrorIfIdentifierIsInvalid() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> new IdentifierValidator("identifier"));
+        assertEquals("Identifier invalid.", exception.getMessage());
     }
 }
