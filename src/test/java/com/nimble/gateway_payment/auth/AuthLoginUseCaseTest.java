@@ -31,4 +31,12 @@ public class AuthLoginUseCaseTest {
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier is not empty.", exception.getMessage());
     }
+
+    @Test
+    public void shouldReturnErrorIfIdentifierIsInvalid() {
+        LoginInputDto dto = new LoginInputDto("invalid", "password");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> this.authUseCase.login(dto));
+        assertEquals("Identifier invalid.", exception.getMessage());
+    }
 }
