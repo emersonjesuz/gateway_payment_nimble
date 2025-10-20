@@ -2,7 +2,7 @@ package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.LoginInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
-import com.nimble.gateway_payment.auth.dtos.exception.IdentifierOrPasswordIncorrectException;
+import com.nimble.gateway_payment.auth.exception.IdentifierOrPasswordIncorrectException;
 import com.nimble.gateway_payment.shared.security.TokenService;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;

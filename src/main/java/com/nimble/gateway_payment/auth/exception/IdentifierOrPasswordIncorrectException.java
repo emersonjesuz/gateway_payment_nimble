@@ -1,4 +1,4 @@
-package com.nimble.gateway_payment.auth.dtos.exception;
+package com.nimble.gateway_payment.auth.exception;
 
 import com.nimble.gateway_payment.shared.exceptions.BadRequestException;
 
