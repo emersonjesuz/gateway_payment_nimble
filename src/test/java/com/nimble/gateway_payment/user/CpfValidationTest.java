@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.user;
 
 import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +18,7 @@ public class CpfValidationTest {
 
     @Test
     public void shouldReturnAnErrorIfCPFHasInvalidCharacter() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        CpfMustContainOnlyNumbersException exception = assertThrows(CpfMustContainOnlyNumbersException.class,
                 () -> new CpfValidator("111.111.111-30"));
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
     }
