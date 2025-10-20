@@ -78,4 +78,17 @@ public class AuthLoginControllerTest {
                 .content(TestUtils.objectToJSON(dto))
         ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturn400IfIdentifierNotIsEmailOrCpf() throws Exception {
+        LoginInputDto dto = LoginInputDto.builder()
+                .identifier("identifierInvalid")
+                .password("123456").build();
+        this.mvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Identifier invalid."));
+    }
 }
