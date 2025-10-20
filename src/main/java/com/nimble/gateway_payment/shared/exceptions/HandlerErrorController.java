@@ -40,7 +40,17 @@ public class HandlerErrorController {
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e, WebRequest request) {
         ErrorResponse error = new ErrorResponse(
                 LocalDateTime.now(),
-                400,
+                e.getStatusCode(),
+                e.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                e.getStatusCode(),
                 e.getMessage(),
                 request.getDescription(false));
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
