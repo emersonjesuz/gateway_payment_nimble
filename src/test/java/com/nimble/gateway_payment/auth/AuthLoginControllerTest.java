@@ -45,27 +45,33 @@ public class AuthLoginControllerTest {
     public void shouldReturn400IfIdentifierNotInformed() throws Exception {
         LoginInputDto dto = LoginInputDto.builder().password("123456").build();
         this.mvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJSON(dto))
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The identifier field requires email or CPF."));
     }
 
     @Test
     public void shouldReturn400IfPasswordNotInformed() throws Exception {
         LoginInputDto dto = LoginInputDto.builder().identifier("josiemerson@email.com").build();
         this.mvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJSON(dto))
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The password field require."));
     }
 
     @Test
     public void shouldReturn400IfIdentifierIsEmpty() throws Exception {
         LoginInputDto dto = LoginInputDto.builder().identifier("").password("123456").build();
         this.mvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJSON(dto))
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The identifier field requires email or CPF."));
     }
 
     @Test
@@ -74,9 +80,10 @@ public class AuthLoginControllerTest {
                 .identifier("josiemerson@email.com")
                 .password("").build();
         this.mvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(TestUtils.objectToJSON(dto))
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                ).andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The password field require."));
     }
 
     @Test
