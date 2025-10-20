@@ -3,6 +3,7 @@ package com.nimble.gateway_payment.charges;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserRepository;
+import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,6 +17,7 @@ public class ChargeUseCase {
     }
 
     public void create(ChargeCreateInputDto dto) {
-        new CpfValidator(dto.getRecipientCpf());
+        CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
+        this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
     }
 }
