@@ -1,6 +1,8 @@
 package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.LoginInputDto;
+import com.nimble.gateway_payment.auth.dtos.exception.IdentifierOrPasswordIncorrectException;
+import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,9 +48,10 @@ public class AuthLoginUseCaseTest {
 
     @Test
     public void shouldReturnErrorIfNotFindUserByIdentifierEmail() {
+
         LoginInputDto dto = new LoginInputDto("josi@email.com", "password");
         when(this.userRepository.findByEmailOrCpf(any(), any())).thenReturn(Optional.empty());
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        IdentifierOrPasswordIncorrectException exception = assertThrows(IdentifierOrPasswordIncorrectException.class,
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier or password incorrect.", exception.getMessage());
     }
@@ -57,7 +60,25 @@ public class AuthLoginUseCaseTest {
     public void shouldReturnErrorIfNotFindUserByIdentifierCpf() {
         LoginInputDto dto = new LoginInputDto("11122233344", "password");
         when(this.userRepository.findByEmailOrCpf(any(), any())).thenReturn(Optional.empty());
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        IdentifierOrPasswordIncorrectException exception = assertThrows(IdentifierOrPasswordIncorrectException.class,
+                () -> this.authUseCase.login(dto));
+        assertEquals("Identifier or password incorrect.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorIfPasswordIncorrect() {
+        UserEntity user = UserEntity.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .name("josi")
+                .password("josi123")
+                .build();
+
+        when(this.userRepository.findByEmailOrCpf(any(), any()))
+                .thenReturn(Optional.of(user));
+        when(this.passwordEncoder.matches(any(), any())).thenReturn(false);
+        LoginInputDto dto = new LoginInputDto("11122233344", "password");
+        IdentifierOrPasswordIncorrectException exception = assertThrows(IdentifierOrPasswordIncorrectException.class,
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier or password incorrect.", exception.getMessage());
     }
