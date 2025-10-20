@@ -1,96 +1,125 @@
 package com.nimble.gateway_payment.auth;
 
+import com.nimble.gateway_payment.TestUtils;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
-import com.nimble.gateway_payment.auth.dtos.RegisterOutputDto;
-import com.nimble.gateway_payment.shared.exceptions.ErrorResponse;
+import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@AutoConfigureMockMvc
 public class AuthRegisterControllerTest {
+
+    @Autowired
+    private MockMvc mvc;
+
+    @Autowired
+    private WebApplicationContext context;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private PasswordEncoder passwordEncoder;
 
     @BeforeEach
-    void cleanDatabase() {
-        userRepository.deleteAll();
+    public void setup() {
+        this.mvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .build();
+        this.userRepository.deleteAll();
     }
 
-    private void createUserInDatabase(String name, String email, String cpf, String password) {
-        RegisterInputDto userRegister = RegisterInputDto.builder()
-                .name(name)
-                .email(email)
-                .cpf(cpf)
-                .password(password)
-                .build();
-        this.restTemplate.postForEntity("/auth/register", userRegister, ErrorResponse.class);
+    private void createUser(RegisterInputDto dto) {
+        var passwordHash = this.passwordEncoder.encode(dto.getPassword());
+        dto.setPassword(passwordHash);
+        var user = new UserEntity(dto);
+        this.userRepository.saveAndFlush(user);
     }
 
     @Test
-    public void shouldReturn400IfNameNotInformed() {
+    public void shouldReturn400IfNameNotInformed() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .email("josi@email.com")
                 .cpf("64717564294")
                 .password("password1234")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The name field cannot be empty", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The name field cannot be empty"));
     }
 
     @Test
-    public void shouldReturn400IfEmailNotInformed() {
+    public void shouldReturn400IfEmailNotInformed() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .cpf("64717564294")
                 .password("password1234")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The email field cannot be empty", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The email field cannot be empty"));
+
     }
 
     @Test
-    public void shouldReturn400IfEmailInvalid() {
+    public void shouldReturn400IfEmailInvalid() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@.com")
                 .cpf("64717564294")
                 .password("password1234")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The email field cannot be invalid", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The email field cannot be invalid"));
+
     }
 
     @Test
-    public void shouldReturn400IfCpfNotInformed() {
+    public void shouldReturn400IfCpfNotInformed() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@email.com")
                 .password("password1234")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The CPF field cannot be empty", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The CPF field cannot be empty"));
+
     }
 
     @Test
-    public void shouldReturn400IfCpfInvalid() {
+    public void shouldReturn400IfCpfInvalid() throws Exception {
         String cpfWith12Digits = "123456789012";
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
@@ -98,89 +127,123 @@ public class AuthRegisterControllerTest {
                 .cpf(cpfWith12Digits)
                 .password("password1234")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The CPF field cannot be invalid", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The CPF field cannot be invalid"));
+
     }
 
     @Test
-    public void shouldReturn400IfPasswordNotInformed() {
+    public void shouldReturn400IfPasswordNotInformed() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@email.com")
                 .cpf("64717564294")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The password field cannot be empty", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The password field cannot be empty"));
     }
 
     @Test
-    public void shouldReturn400IfPasswordHasLessThan6Digits() {
+    public void shouldReturn400IfPasswordHasLessThan6Digits() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@email.com")
                 .cpf("64717564294")
                 .password("12345")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The Password field must have at least 6 digits", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The Password field must have at least 6 digits"));
     }
 
     @Test
-    public void shouldReturn400IfCpfCharacterInvalid() {
+    public void shouldReturn400IfCpfCharacterInvalid() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi@email.com")
                 .cpf("647.175.642-94")
                 .password("123456")
                 .build();
-        ErrorResponse response = this.restTemplate.postForObject("/auth/register", dto, ErrorResponse.class);
-        assertEquals(400, response.status());
-        assertEquals("The CPF must contain only numbers.", response.message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The CPF must contain only numbers."));
+
     }
 
     @Test
-    public void shouldReturn400IfExistsUserWithCpf() {
-        this.createUserInDatabase("josi", "jos@email.com", "11501002902", "123456");
+    public void shouldReturn400IfExistsUserWithCpf() throws Exception {
+        RegisterInputDto registerInputDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josiemerso@email.com")
+                .cpf("11501002902")
+                .password("123456")
+                .build();
+        this.createUser(registerInputDto);
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josiemerson@email.com")
                 .cpf("11501002902")
                 .password("123456")
                 .build();
-        ResponseEntity<ErrorResponse> response = this.restTemplate.postForEntity("/auth/register", dto, ErrorResponse.class);
-        System.out.println(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("User already exists", response.getBody().message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User already exists"));
     }
 
     @Test
-    public void shouldReturn400IfExistsUserWithEmail() {
-        this.createUserInDatabase("josi", "josiemerson@email.com", "11501002902", "123456");
+    public void shouldReturn400IfExistsUserWithEmail() throws Exception {
+        RegisterInputDto registerInputDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josiemerson@email.com")
+                .cpf("11501002902")
+                .password("123456")
+                .build();
+        this.createUser(registerInputDto);
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josiemerson@email.com")
-                .cpf("64717564294")
+                .cpf("38485789300")
                 .password("123456")
                 .build();
-        ResponseEntity<ErrorResponse> response = this.restTemplate.postForEntity("/auth/register", dto, ErrorResponse.class);
-        System.out.println(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("User already exists", response.getBody().message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User already exists"));
+
     }
 
     @Test
-    public void shouldReturn200IfUserRegisterSuccess() {
+    public void shouldReturn200IfUserRegisterSuccess() throws Exception {
         RegisterInputDto dto = RegisterInputDto.builder()
                 .name("josi")
                 .email("josi1@email.com")
                 .cpf("38485789300")
                 .password("123456")
                 .build();
-        ResponseEntity<RegisterOutputDto> response = this.restTemplate.postForEntity("/auth/register", dto, RegisterOutputDto.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("User created with success.", response.getBody().message());
+        this.mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User created with success."));
     }
 }
