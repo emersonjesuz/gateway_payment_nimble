@@ -2,6 +2,7 @@ package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.LoginInputDto;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
+import com.nimble.gateway_payment.auth.dtos.exception.IdentifierOrPasswordIncorrectException;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
@@ -35,7 +36,11 @@ public class AuthUseCase {
 
     public void login(LoginInputDto dto) {
         IdentifierValidator identifier = new IdentifierValidator(dto.getIdentifier());
-        this.userRepository.findByEmailOrCpf(identifier.getEmail(), identifier.getCpf())
-                .orElseThrow(() -> new IllegalArgumentException("Identifier or password incorrect."));
+        UserEntity user = this.userRepository.findByEmailOrCpf(identifier.getEmail(), identifier.getCpf())
+                .orElseThrow(IdentifierOrPasswordIncorrectException::new);
+
+        if (!this.passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+            throw new IdentifierOrPasswordIncorrectException();
+        }
     }
 }
