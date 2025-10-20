@@ -4,10 +4,7 @@ import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.ChargeUseCase;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.user.UserRepository;
-import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
-import com.nimble.gateway_payment.user.exceptions.CpfInvalidException;
-import com.nimble.gateway_payment.user.exceptions.CpfMustContainExactly11NumbersException;
-import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
+import com.nimble.gateway_payment.user.exceptions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -63,5 +60,14 @@ public class ChargeCreateUseCasesTest {
             this.chargeUseCase.create(dto);
         });
         assertEquals("CPF inválid.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnAnErrorIfNotExistsUserWithRecipientCpf() {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("64717564294").build();
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
+            this.chargeUseCase.create(dto);
+        });
+        assertEquals("User not found.", exception.getMessage());
     }
 }
