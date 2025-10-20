@@ -1,11 +1,13 @@
 package com.nimble.gateway_payment.user;
 
+import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+
 public class CpfValidator {
     private final String value;
 
     public CpfValidator(String value) {
         if (value == null) {
-            throw new IllegalArgumentException("The CPF cannot be null.");
+            throw new CpfCannotBeNullException();
         }
         String cleaned = value.trim();
         if (!cleaned.matches("\\d+")) {

@@ -1,16 +1,16 @@
-package com.nimble.gateway_payment.user.valueObjects;
+package com.nimble.gateway_payment.user;
 
-import com.nimble.gateway_payment.user.CpfValidator;
+import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class CpfTest {
+public class CpfValidationTest {
 
     @Test
     public void shouldReturnAnErrorIfCpfIsNull() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        CpfCannotBeNullException exception = assertThrows(CpfCannotBeNullException.class,
                 () -> new CpfValidator(null));
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
