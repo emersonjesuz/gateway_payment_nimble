@@ -1,0 +1,2 @@
+ALTER TABLE charges
+ADD COLUMN description VARCHAR(255) DEFAULT '' NOT NULL;

@@ -38,4 +38,6 @@ public class ChargeEntity {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    private String description;
 }
