@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.user;
 
 import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+import com.nimble.gateway_payment.user.exceptions.CpfMustContainExactly11NumbersException;
 import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
 
 public class CpfValidator {
@@ -15,7 +16,7 @@ public class CpfValidator {
             throw new CpfMustContainOnlyNumbersException();
         }
         if (cleaned.length() != 11) {
-            throw new IllegalArgumentException("The CPF must contain exactly 11 numeric digits.");
+            throw new CpfMustContainExactly11NumbersException();
         }
         if (!isValidCpf(cleaned)) {
             throw new IllegalArgumentException("CPF inválid.");

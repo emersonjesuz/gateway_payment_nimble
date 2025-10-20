@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.user;
 
 import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+import com.nimble.gateway_payment.user.exceptions.CpfMustContainExactly11NumbersException;
 import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
 import org.junit.jupiter.api.Test;
 
@@ -28,10 +29,10 @@ public class CpfValidationTest {
         var cpfWith9Digits = "123456789";
         var cpfWith12Digits = "123456789012";
 
-        IllegalArgumentException firstException = assertThrows(IllegalArgumentException.class,
+        CpfMustContainExactly11NumbersException firstException = assertThrows(CpfMustContainExactly11NumbersException.class,
                 () -> new CpfValidator(cpfWith9Digits));
 
-        IllegalArgumentException secondException = assertThrows(IllegalArgumentException.class,
+        CpfMustContainExactly11NumbersException secondException = assertThrows(CpfMustContainExactly11NumbersException.class,
                 () -> new CpfValidator(cpfWith12Digits));
 
         assertEquals("The CPF must contain exactly 11 numeric digits.", firstException.getMessage());
