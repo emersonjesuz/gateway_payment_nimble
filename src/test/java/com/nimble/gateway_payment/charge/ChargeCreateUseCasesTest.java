@@ -5,6 +5,7 @@ import com.nimble.gateway_payment.charges.ChargeUseCase;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,4 +36,12 @@ public class ChargeCreateUseCasesTest {
         assertEquals("The CPF cannot be null.", exception.getMessage());
     }
 
+    @Test
+    public void shouldReturnAnErrorIfRecipientCpfHasInvalidCharacter() {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("111.222.333.44").build();
+        CpfMustContainOnlyNumbersException exception = assertThrows(CpfMustContainOnlyNumbersException.class, () -> {
+            this.chargeUseCase.create(dto);
+        });
+        assertEquals("The CPF must contain only numbers.", exception.getMessage());
+    }
 }
