@@ -58,4 +58,13 @@ public class AuthLoginControllerTest {
                 .content(TestUtils.objectToJSON(dto))
         ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturn400IfIdentifierIsEmpty() throws Exception {
+        LoginInputDto dto = LoginInputDto.builder().identifier("").password("123456").build();
+        this.mvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.objectToJSON(dto))
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
