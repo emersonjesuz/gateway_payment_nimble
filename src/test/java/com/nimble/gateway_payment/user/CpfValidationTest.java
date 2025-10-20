@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.user;
 
 import com.nimble.gateway_payment.user.exceptions.CpfCannotBeNullException;
+import com.nimble.gateway_payment.user.exceptions.CpfInvalidException;
 import com.nimble.gateway_payment.user.exceptions.CpfMustContainExactly11NumbersException;
 import com.nimble.gateway_payment.user.exceptions.CpfMustContainOnlyNumbersException;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class CpfValidationTest {
 
     @Test
     public void shouldReturnAnErrorIfCPFInvalid() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        CpfInvalidException exception = assertThrows(CpfInvalidException.class,
                 () -> new CpfValidator("11111111111"));
         assertEquals("CPF inválid.", exception.getMessage());
     }
