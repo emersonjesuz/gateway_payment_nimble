@@ -45,6 +45,7 @@ public class AuthLoginControllerTest {
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .build();
+        this.userRepository.deleteAll();
     }
 
     private void createUser(RegisterInputDto dto) {
@@ -157,5 +158,26 @@ public class AuthLoginControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Identifier or password incorrect."));
+    }
+
+    @Test
+    public void shouldReturn200IfIdentifierEmailIsPasswordCorrect() throws Exception {
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+
+        LoginInputDto dto = LoginInputDto.builder()
+                .identifier("josi1@email.com")
+                .password("123456").build();
+        this.mvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists());
     }
 }
