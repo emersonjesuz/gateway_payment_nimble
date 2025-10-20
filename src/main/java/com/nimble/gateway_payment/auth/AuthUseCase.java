@@ -7,6 +7,7 @@ import com.nimble.gateway_payment.shared.security.TokenService;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
+import com.nimble.gateway_payment.user.exceptions.UserAlreadyExistsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,7 @@ public class AuthUseCase {
     public void register(RegisterInputDto dto) {
         CpfValidator cpf = new CpfValidator(dto.getCpf());
         if (this.userRepository.findByEmailOrCpf(dto.getEmail(), cpf.getValue()).isPresent()) {
-            throw new IllegalArgumentException("User already exists");
+            throw new UserAlreadyExistsException();
         }
         var passwordHash = this.passwordEncoder.encode(dto.getPassword());
         UserEntity user = UserEntity.builder()
