@@ -111,4 +111,17 @@ public class AuthLoginControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Identifier or password incorrect."));
     }
+
+    @Test
+    public void shouldReturn400IfIdentifierByCpfNotExists() throws Exception {
+        LoginInputDto dto = LoginInputDto.builder()
+                .identifier("12233344540")
+                .password("123456").build();
+        this.mvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Identifier or password incorrect."));
+    }
 }
