@@ -49,4 +49,13 @@ public class AuthLoginControllerTest {
                 .content(TestUtils.objectToJSON(dto))
         ).andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    @Test
+    public void shouldReturn400IfPasswordNotInformed() throws Exception {
+        LoginInputDto dto = LoginInputDto.builder().identifier("josiemerson@email.com").build();
+        this.mvc.perform(post("/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(TestUtils.objectToJSON(dto))
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
 }
