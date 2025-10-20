@@ -3,6 +3,7 @@ package com.nimble.gateway_payment.auth;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
+import com.nimble.gateway_payment.user.exceptions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +33,7 @@ public class AuthRegisterUseCasesTest {
     @Test
     public void shouldReturnAnErrorIfCpfIsNull() {
         RegisterInputDto dto = RegisterInputDto.builder().cpf(null).build();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CpfCannotBeNullException exception = assertThrows(CpfCannotBeNullException.class, () -> {
             this.authUseCase.register(dto);
         });
         assertEquals("The CPF cannot be null.", exception.getMessage());
@@ -41,7 +42,7 @@ public class AuthRegisterUseCasesTest {
     @Test
     public void shouldReturnAnErrorIfCPFHasInvalidCharacter() {
         RegisterInputDto dto = RegisterInputDto.builder().cpf("111.222.333.10").build();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CpfMustContainOnlyNumbersException exception = assertThrows(CpfMustContainOnlyNumbersException.class, () -> {
             this.authUseCase.register(dto);
         });
         assertEquals("The CPF must contain only numbers.", exception.getMessage());
@@ -50,7 +51,7 @@ public class AuthRegisterUseCasesTest {
     @Test
     public void shouldReturnAnErrorIfCPFNot11NumericDigits() {
         RegisterInputDto dto = RegisterInputDto.builder().cpf("1122233310").build();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CpfMustContainExactly11NumbersException exception = assertThrows(CpfMustContainExactly11NumbersException.class, () -> {
             this.authUseCase.register(dto);
         });
         assertEquals("The CPF must contain exactly 11 numeric digits.", exception.getMessage());
@@ -59,7 +60,7 @@ public class AuthRegisterUseCasesTest {
     @Test
     public void shouldReturnAnErrorIfCPFInvalid() {
         RegisterInputDto dto = RegisterInputDto.builder().cpf("22222222222").build();
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CpfInvalidException exception = assertThrows(CpfInvalidException.class, () -> {
             this.authUseCase.register(dto);
         });
         assertEquals("CPF inválid.", exception.getMessage());
@@ -82,7 +83,7 @@ public class AuthRegisterUseCasesTest {
         when(this.userRepository.findByEmailOrCpf(anyString(), anyString()))
                 .thenReturn(Optional.of(user));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        UserAlreadyExistsException exception = assertThrows(UserAlreadyExistsException.class, () -> {
             this.authUseCase.register(dto);
         });
 
