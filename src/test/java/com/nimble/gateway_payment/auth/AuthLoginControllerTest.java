@@ -180,4 +180,25 @@ public class AuthLoginControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists());
     }
+
+    @Test
+    public void shouldReturn200IfIdentifierCpfIsPasswordCorrect() throws Exception {
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+
+        LoginInputDto dto = LoginInputDto.builder()
+                .identifier("38485789300")
+                .password("123456").build();
+        this.mvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.token").exists());
+    }
 }
