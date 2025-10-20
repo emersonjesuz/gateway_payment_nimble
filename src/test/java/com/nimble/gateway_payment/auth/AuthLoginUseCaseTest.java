@@ -2,6 +2,7 @@ package com.nimble.gateway_payment.auth;
 
 import com.nimble.gateway_payment.auth.dtos.LoginInputDto;
 import com.nimble.gateway_payment.auth.dtos.exception.IdentifierOrPasswordIncorrectException;
+import com.nimble.gateway_payment.shared.security.TokenService;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ public class AuthLoginUseCaseTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private TokenService tokenService;
 
     @InjectMocks
     private AuthUseCase authUseCase;
@@ -81,5 +85,23 @@ public class AuthLoginUseCaseTest {
         IdentifierOrPasswordIncorrectException exception = assertThrows(IdentifierOrPasswordIncorrectException.class,
                 () -> this.authUseCase.login(dto));
         assertEquals("Identifier or password incorrect.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnTokenIfUserIsValid() {
+        UserEntity user = UserEntity.builder()
+                .email("josi@email.com")
+                .cpf("64717564294")
+                .name("josi")
+                .password("josi123")
+                .build();
+
+        when(this.userRepository.findByEmailOrCpf(any(), any()))
+                .thenReturn(Optional.of(user));
+        when(this.passwordEncoder.matches(any(), any())).thenReturn(true);
+        LoginInputDto dto = new LoginInputDto("11122233344", "password");
+        when(this.tokenService.generateToken(any())).thenReturn("TokenValid");
+        String result = this.authUseCase.login(dto);
+        assertEquals("TokenValid", result);
     }
 }
