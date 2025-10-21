@@ -48,11 +48,12 @@ public class ChargeCreateControllerTest {
 
     @BeforeEach
     public void setup() {
-        this.userRepository.deleteAll();
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
+        this.chargeRepository.deleteAll();
+        this.userRepository.deleteAll();
     }
 
     private void createUser(RegisterInputDto dto) {
@@ -238,5 +239,34 @@ public class ChargeCreateControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The originator cannot be the same as the recipient."));
+    }
+
+    @Test
+    public void shouldReturn200IfChargeCreatedSuccess() throws Exception {
+        RegisterInputDto recipientDto = RegisterInputDto.builder()
+                .name("jos")
+                .email("jos@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(recipientDto);
+
+        RegisterInputDto originatorDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("11501002902")
+                .password("123456")
+                .build();
+        this.createUser(originatorDto);
+
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("38485789300").amount(BigDecimal.valueOf(100)).build();
+        this.mvc.perform(post("/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                        .cookie(new Cookie("userId", this.userMock.getId().toString()))
+                        .header("Authorization", TestUtils.generatedToken(this.userMock))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Charge created with success."));
     }
 }
