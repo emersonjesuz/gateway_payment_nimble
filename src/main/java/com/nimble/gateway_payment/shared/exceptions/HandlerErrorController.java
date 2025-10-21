@@ -53,7 +53,7 @@ public class HandlerErrorController {
                 e.getStatusCode(),
                 e.getMessage(),
                 request.getDescription(false));
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(RuntimeException.class)
