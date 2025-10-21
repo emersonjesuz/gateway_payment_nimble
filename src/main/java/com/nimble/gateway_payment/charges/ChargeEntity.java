@@ -26,11 +26,11 @@ public class ChargeEntity {
     private BigDecimal amount;
 
     @ManyToOne
-    @JoinColumn(name = "originator_cpf", nullable = false)
+    @JoinColumn(name = "originator_cpf", referencedColumnName = "cpf", nullable = false)
     private UserEntity originatorUser;
 
     @ManyToOne
-    @JoinColumn(name = "recipient_cpf", nullable = false)
+    @JoinColumn(name = "recipient_cpf", referencedColumnName = "cpf", nullable = false)
     private UserEntity recipientUser;
 
     @Enumerated(EnumType.STRING)
