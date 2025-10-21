@@ -47,6 +47,7 @@ public class ChargeCreateControllerTest {
 
     @BeforeEach
     public void setup() {
+        this.userRepository.deleteAll();
         this.mvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(SecurityMockMvcConfigurers.springSecurity())
@@ -76,6 +77,25 @@ public class ChargeCreateControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The recipientCpf field cannot be empty"));
+    }
 
+    @Test
+    public void shouldReturn400IfRecipientCpfIsInvalid() throws Exception {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("invalid cpf").amount(BigDecimal.valueOf(200)).build();
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+        this.mvc.perform(post("/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                        .cookie(new Cookie("userId", this.userMock.getId().toString()))
+                        .header("Authorization", TestUtils.generatedToken(this.userMock))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The recipientCpf field cannot be invalid"));
     }
 }
