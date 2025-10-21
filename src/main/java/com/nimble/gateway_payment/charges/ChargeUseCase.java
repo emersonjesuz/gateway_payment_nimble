@@ -6,6 +6,8 @@ import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class ChargeUseCase {
     private final UserRepository userRepository;
@@ -16,8 +18,10 @@ public class ChargeUseCase {
         this.userRepository = userRepository;
     }
 
-    public void create(ChargeCreateInputDto dto) {
+    public void create(ChargeCreateInputDto dto, UUID originatorId) {
         CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
         this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
+        this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+
     }
 }
