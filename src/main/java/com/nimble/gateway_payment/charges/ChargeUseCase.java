@@ -2,6 +2,7 @@ package com.nimble.gateway_payment.charges;
 
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.user.CpfValidator;
+import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,14 @@ public class ChargeUseCase {
 
     public void create(ChargeCreateInputDto dto, UUID originatorId) {
         CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
-        this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
-        this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
-
+        UserEntity recipientUser = this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
+        UserEntity originatorUser = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+        ChargeEntity charge = ChargeEntity.builder()
+                .recipientUser(recipientUser)
+                .originatorUser(originatorUser)
+                .amount(dto.getAmount())
+                .description(dto.getDescription())
+                .build();
+        this.chargeRepository.save(charge);
     }
 }
