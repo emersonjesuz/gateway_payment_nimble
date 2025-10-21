@@ -23,6 +23,7 @@ public class ChargeUseCase {
         CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
         UserEntity recipientUser = this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
         UserEntity originatorUser = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+        OriginatorEqualsRecipientValidator.validate(originatorUser.getCpf(), recipientUser.getCpf());
         ChargeEntity charge = new ChargeEntity();
         charge.setOriginatorUser(originatorUser);
         charge.setRecipientUser(recipientUser);
