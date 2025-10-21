@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.charge;
 
+import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.ChargeUseCase;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
@@ -12,11 +13,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -88,5 +89,19 @@ public class ChargeCreateUseCasesTest {
             this.chargeUseCase.create(dto, originatorId);
         });
         assertEquals("User not found.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldNotReturnErrorIfEverythingIsCorrect() {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("64717564294").amount(BigDecimal.valueOf(200)).build();
+        UserEntity user = UserEntity.builder().build();
+        when(this.userRepository.findByCpf(any())).thenReturn(Optional.of(user));
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
+        ChargeEntity charge = ChargeEntity.builder().build();
+        when(this.chargeRepository.save(any())).thenReturn(charge);
+        System.out.println(charge.getStatus());
+        assertDoesNotThrow(() -> {
+            this.chargeUseCase.create(dto, originatorId);
+        });
     }
 }
