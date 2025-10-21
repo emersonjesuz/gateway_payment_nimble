@@ -181,7 +181,7 @@ public class ChargeCreateControllerTest {
     }
 
     @Test
-    public void shouldReturn400IfExistsRecipientUserWithCpf() throws Exception {
+    public void shouldReturn404IfExistsRecipientUserWithCpf() throws Exception {
         ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("38485789300").amount(BigDecimal.valueOf(100)).build();
         RegisterInputDto registerDto = RegisterInputDto.builder()
                 .name("josi")
@@ -196,12 +196,12 @@ public class ChargeCreateControllerTest {
                         .cookie(new Cookie("userId", this.userMock.getId().toString()))
                         .header("Authorization", TestUtils.generatedToken(this.userMock))
                 )
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found."));
     }
 
     @Test
-    public void shouldReturn400IfExistsOriginatorUserWithCpf() throws Exception {
+    public void shouldReturn404IfExistsOriginatorUserWithCpf() throws Exception {
         ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("11501002902").amount(BigDecimal.valueOf(100)).build();
         RegisterInputDto registerDto = RegisterInputDto.builder()
                 .name("josi")
@@ -216,7 +216,7 @@ public class ChargeCreateControllerTest {
                         .cookie(new Cookie("userId", UUID.randomUUID().toString()))
                         .header("Authorization", TestUtils.generatedToken(this.userMock))
                 )
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found."));
     }
 }
