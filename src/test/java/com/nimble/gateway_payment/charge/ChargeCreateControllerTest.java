@@ -138,4 +138,24 @@ public class ChargeCreateControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Amount must be greater than 0"));
     }
+
+    @Test
+    public void shouldReturn400IfAmountIsGreaterThan10Thousand() throws Exception {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("38485789300").amount(BigDecimal.valueOf(10001)).build();
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+        this.mvc.perform(post("/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                        .cookie(new Cookie("userId", this.userMock.getId().toString()))
+                        .header("Authorization", TestUtils.generatedToken(this.userMock))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Amount must not exceed R$ 10,000"));
+    }
 }
