@@ -219,4 +219,24 @@ public class ChargeCreateControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("User not found."));
     }
+
+    @Test
+    public void shouldReturn400IfOriginatorEqualRecipient() throws Exception {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("11501002902").amount(BigDecimal.valueOf(100)).build();
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("11501002902")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+        this.mvc.perform(post("/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                        .cookie(new Cookie("userId", this.userMock.getId().toString()))
+                        .header("Authorization", TestUtils.generatedToken(this.userMock))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The originator cannot be the same as the recipient."));
+    }
 }
