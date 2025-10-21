@@ -98,4 +98,24 @@ public class ChargeCreateControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The recipientCpf field cannot be invalid"));
     }
+
+    @Test
+    public void shouldReturn400IfAmountNotInformed() throws Exception {
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("38485789300").build();
+        RegisterInputDto registerDto = RegisterInputDto.builder()
+                .name("josi")
+                .email("josi1@email.com")
+                .cpf("38485789300")
+                .password("123456")
+                .build();
+        this.createUser(registerDto);
+        this.mvc.perform(post("/charge")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(TestUtils.objectToJSON(dto))
+                        .cookie(new Cookie("userId", this.userMock.getId().toString()))
+                        .header("Authorization", TestUtils.generatedToken(this.userMock))
+                )
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("The amount field cannot be empty"));
+    }
 }
