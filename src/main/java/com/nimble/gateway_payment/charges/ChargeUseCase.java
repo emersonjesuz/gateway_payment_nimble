@@ -23,12 +23,11 @@ public class ChargeUseCase {
         CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
         UserEntity recipientUser = this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
         UserEntity originatorUser = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
-        ChargeEntity charge = ChargeEntity.builder()
-                .recipientUser(recipientUser)
-                .originatorUser(originatorUser)
-                .amount(dto.getAmount())
-                .description(dto.getDescription())
-                .build();
+        ChargeEntity charge = new ChargeEntity();
+        charge.setOriginatorUser(originatorUser);
+        charge.setRecipientUser(recipientUser);
+        charge.setAmount(dto.getAmount());
+        charge.setDescription(dto.getDescription() != null ? dto.getDescription() : "");
         this.chargeRepository.save(charge);
     }
 }
