@@ -1,5 +1,7 @@
 package com.nimble.gateway_payment.auth;
 
+import com.nimble.gateway_payment.auth.exception.IdentifierInvalid;
+import com.nimble.gateway_payment.auth.exception.IdentifierIsEmptyException;
 import lombok.Getter;
 
 @Getter
@@ -9,7 +11,7 @@ public class IdentifierValidator {
 
     public IdentifierValidator(String value) {
         if (value == null || value.isEmpty()) {
-            throw new IllegalArgumentException("Identifier is not empty.");
+            throw new IdentifierIsEmptyException();
         }
 
         if (value.contains("@") && value.contains(".")) {
@@ -21,8 +23,7 @@ public class IdentifierValidator {
             this.cpf = value;
             return;
         }
-
-        throw new IllegalArgumentException("Identifier invalid.");
+        throw new IdentifierInvalid();
     }
 
 }
