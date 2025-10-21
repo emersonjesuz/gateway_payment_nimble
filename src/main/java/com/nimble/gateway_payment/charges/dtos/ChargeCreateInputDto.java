@@ -1,6 +1,5 @@
 package com.nimble.gateway_payment.charges.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -17,11 +16,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ChargeCreateInputDto {
-    @NotBlank(message = "The originatorCpf field cannot be empty")
-    @CPF(message = "The originatorCpf field cannot be invalid")
-    @JsonIgnore
-    private String originatorCpf;
-
     @NotBlank(message = "The recipientCpf field cannot be empty")
     @CPF(message = "The recipientCpf field cannot be invalid")
     private String recipientCpf;
