@@ -4,6 +4,7 @@ import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.ChargeUseCase;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
+import com.nimble.gateway_payment.charges.exception.OriginatorEqualsRecipientException;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.*;
@@ -92,14 +93,30 @@ public class ChargeCreateUseCasesTest {
     }
 
     @Test
+    public void shouldReturnErrorIfOriginatorCpfEqualRecipientCpf() {
+        var originatorCpf = "12345678901";
+        var recipientCpf = "12345678901";
+        UserEntity originatorUser = UserEntity.builder().cpf(originatorCpf).build();
+        when(this.userRepository.findByCpf(any())).thenReturn(Optional.of(originatorUser));
+        UserEntity recipientUser = UserEntity.builder().cpf(recipientCpf).build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(recipientUser));
+        ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("64717564294").build();
+        OriginatorEqualsRecipientException exception = assertThrows(OriginatorEqualsRecipientException.class,
+                () -> this.chargeUseCase.create(dto, originatorId));
+        assertEquals("The originator cannot be the same as the recipient.", exception.getMessage());
+    }
+
+    @Test
     public void shouldNotReturnErrorIfEverythingIsCorrect() {
         ChargeCreateInputDto dto = ChargeCreateInputDto.builder().recipientCpf("64717564294").amount(BigDecimal.valueOf(200)).build();
-        UserEntity user = UserEntity.builder().build();
-        when(this.userRepository.findByCpf(any())).thenReturn(Optional.of(user));
-        when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
+        var originatorCpf = "12345678901";
+        var recipientCpf = "12345678902";
+        UserEntity originatorUser = UserEntity.builder().cpf(originatorCpf).build();
+        when(this.userRepository.findByCpf(any())).thenReturn(Optional.of(originatorUser));
+        UserEntity recipientUser = UserEntity.builder().cpf(recipientCpf).build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(recipientUser));
         ChargeEntity charge = ChargeEntity.builder().build();
         when(this.chargeRepository.save(any())).thenReturn(charge);
-        System.out.println(charge.getStatus());
         assertDoesNotThrow(() -> {
             this.chargeUseCase.create(dto, originatorId);
         });
