@@ -66,13 +66,24 @@ public class FindAllChargeUseCaseTest {
     }
 
     @Test
-    public void shouldReturnListCharges() {
+    public void shouldReturnListChargesTypeUserOriginator() {
         UserEntity user1 = UserEntity.builder().build();
         UserEntity user2 = UserEntity.builder().build();
         when(this.userRepository.findById(any())).thenReturn(Optional.of(user1));
-        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data(user1, user1, user2, user2));
+        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data(user1, user2, user1, user2));
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
         var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.ORIGINATOR);
+        assertEquals(4, result.size());
+    }
+
+    @Test
+    public void shouldReturnListChargesTypeUserRecipient() {
+        UserEntity user1 = UserEntity.builder().id(UUID.randomUUID()).build();
+        UserEntity user2 = UserEntity.builder().id(UUID.randomUUID()).build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(user1));
+        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data(user1, user2, user1, user2));
+        when(this.chargeRepository.findAllByRecipientUser(any(), any())).thenReturn(listMock);
+        var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.RECIPIENT);
         assertEquals(4, result.size());
     }
 }
