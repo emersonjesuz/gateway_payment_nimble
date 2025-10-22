@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,4 +68,29 @@ public class HandlerErrorController {
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e, WebRequest request) {
+        String message = e.getMessage();
+        if (e.getName().equals("status") && e.getRequiredType() != null && e.getRequiredType().isEnum()) {
+            message = String.format(
+                    "O valor '%s' não é um status válido. Valores aceitos: %s",
+                    e.getValue(),
+                    String.join(", ", getEnumValues(e.getRequiredType()))
+            );
+
+        }
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                400,
+                message,
+                request.getDescription(false)
+        );
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    private String[] getEnumValues(Class<?> enumType) {
+        return (String[]) java.util.Arrays.stream(enumType.getEnumConstants())
+                .map(Object::toString)
+                .toArray(String[]::new);
+    }
 }
