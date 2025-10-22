@@ -73,7 +73,7 @@ public class HandlerErrorController {
         String message = e.getMessage();
         if (e.getName().equals("status") && e.getRequiredType() != null && e.getRequiredType().isEnum()) {
             message = String.format(
-                    "O valor '%s' não é um status válido. Valores aceitos: %s",
+                    "The value '%s' is not a valid status. Accepted values: %s",
                     e.getValue(),
                     String.join(", ", getEnumValues(e.getRequiredType()))
             );
