@@ -5,7 +5,6 @@ import com.nimble.gateway_payment.TestUtils;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
-import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,7 +77,6 @@ public class FindAllCreateChargeControllerTest {
     public void shouldReturn400IfStatusInvalid() throws Exception {
         this.mvc.perform(get("/charge/created?status=INVALID")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .cookie(new Cookie("userId", user1.getId().toString()))
                         .header("Authorization", TestUtils.generatedToken(user1))
                 )
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())

@@ -3,13 +3,14 @@ package com.nimble.gateway_payment.charges;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateOutputDto;
 import com.nimble.gateway_payment.charges.dtos.ChargeOutputDto;
+import com.nimble.gateway_payment.user.UserEntity;
 import jakarta.validation.Valid;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/charge")
@@ -22,14 +23,14 @@ public class ChargeController {
     }
 
     @PostMapping
-    private ResponseEntity<ChargeCreateOutputDto> create(@RequestBody @Valid ChargeCreateInputDto body, @CookieValue(name = "userId") String userId) {
-        this.chargeUseCase.create(body, UUID.fromString(userId));
+    private ResponseEntity<ChargeCreateOutputDto> create(@RequestBody @Valid ChargeCreateInputDto body, @AuthenticationPrincipal UserEntity user) {
+        this.chargeUseCase.create(body, user.getId());
         return ResponseEntity.status(200).body(new ChargeCreateOutputDto("Charge created with success."));
     }
 
     @GetMapping("/created")
-    private ResponseEntity<List<ChargeOutputDto>> findAllCreateCharge(@Param("status") Status status, @CookieValue(name = "userId") String userId) {
-        var result = this.chargeUseCase.findAllCreateCharge(status, UUID.fromString(userId));
+    private ResponseEntity<List<ChargeOutputDto>> findAllCreateCharge(@Param("status") Status status, @AuthenticationPrincipal UserEntity user) {
+        var result = this.chargeUseCase.findAllCreateCharge(status, user.getId());
         return ResponseEntity.status(200).body(result);
     }
 }
