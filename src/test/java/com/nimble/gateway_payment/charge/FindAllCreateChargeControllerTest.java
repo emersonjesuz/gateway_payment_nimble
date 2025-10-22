@@ -93,4 +93,15 @@ public class FindAllCreateChargeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
     }
+
+    @Test
+    public void shouldReturn200AndListChargeWithFilterStatusPAID() throws Exception {
+        this.mvc.perform(get("/charge/created?status=PAID")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", TestUtils.generatedToken(user1))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].status").value("PAID"));
+    }
 }
