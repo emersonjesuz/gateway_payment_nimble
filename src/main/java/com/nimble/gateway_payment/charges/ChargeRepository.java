@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.charges;
 
+import com.nimble.gateway_payment.charges.enums.Status;
 import com.nimble.gateway_payment.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

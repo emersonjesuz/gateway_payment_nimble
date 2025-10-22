@@ -2,6 +2,8 @@ package com.nimble.gateway_payment.charges;
 
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.charges.dtos.ChargeOutputDto;
+import com.nimble.gateway_payment.charges.enums.Status;
+import com.nimble.gateway_payment.charges.enums.TypeCharge;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
@@ -34,9 +36,14 @@ public class ChargeUseCase {
         this.chargeRepository.save(charge);
     }
 
-    public List<ChargeOutputDto> findAllCreateCharge(Status status, UUID originatorId) {
+    public List<ChargeOutputDto> findAllCharge(Status status, UUID originatorId, TypeCharge typeCharge) {
         UserEntity user = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
-        List<ChargeEntity> charges = this.chargeRepository.findAllByOriginatorUser(user, status);
+        List<ChargeEntity> charges;
+        if (typeCharge == TypeCharge.ORIGINATOR) {
+            charges = this.chargeRepository.findAllByOriginatorUser(user, status);
+        } else {
+            charges = this.chargeRepository.findAllByRecipientUser(user, status);
+        }
         return charges.stream().map(ChargeOutputDto::new).toList();
     }
 }

@@ -1,7 +1,7 @@
 package com.nimble.gateway_payment;
 
 import com.nimble.gateway_payment.charges.ChargeEntity;
-import com.nimble.gateway_payment.charges.Status;
+import com.nimble.gateway_payment.charges.enums.Status;
 import com.nimble.gateway_payment.user.UserEntity;
 
 import java.math.BigDecimal;

@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.charges;
 
+import com.nimble.gateway_payment.charges.enums.Status;
 import com.nimble.gateway_payment.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

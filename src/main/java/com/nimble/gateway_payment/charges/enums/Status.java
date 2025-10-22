@@ -1,4 +1,4 @@
-package com.nimble.gateway_payment.charges;
+package com.nimble.gateway_payment.charges.enums;
 
 public enum Status {
     PENDING,
