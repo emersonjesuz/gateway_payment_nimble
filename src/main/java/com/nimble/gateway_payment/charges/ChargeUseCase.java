@@ -1,12 +1,14 @@
 package com.nimble.gateway_payment.charges;
 
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
+import com.nimble.gateway_payment.charges.dtos.ChargeOutputDto;
 import com.nimble.gateway_payment.user.CpfValidator;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,7 +34,9 @@ public class ChargeUseCase {
         this.chargeRepository.save(charge);
     }
 
-    public void findAllCreateCharge(Status status, UUID originatorId) {
-        this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+    public List<ChargeOutputDto> findAllCreateCharge(Status status, UUID originatorId) {
+        UserEntity user = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+        List<ChargeEntity> charges = this.chargeRepository.findAllByOriginatorUser(user, status);
+        return charges.stream().map(ChargeOutputDto::new).toList();
     }
 }
