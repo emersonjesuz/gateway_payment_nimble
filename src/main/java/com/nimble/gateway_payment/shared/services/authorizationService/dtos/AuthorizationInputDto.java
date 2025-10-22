@@ -4,5 +4,5 @@ import com.nimble.gateway_payment.shared.services.authorizationService.TypeTrans
 
 import java.math.BigDecimal;
 
-public record AuthorizationInputDto(TypeTransaction typeTransaction, String cpf, BigDecimal amount, int numberCard, String exp, int cvv) {
+public record AuthorizationInputDto(TypeTransaction typeTransaction, String cpf, BigDecimal amount, String numberCard, String exp, String cvv) {
 }
