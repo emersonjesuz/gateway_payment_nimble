@@ -28,7 +28,7 @@ public class ChargeController {
     }
 
     @GetMapping("/created")
-    private ResponseEntity<List<ChargeOutputDto>> findAllByOriginator(@Param("status") Status status, @CookieValue(name = "userId") String userId) {
+    private ResponseEntity<List<ChargeOutputDto>> findAllCreateCharge(@Param("status") Status status, @CookieValue(name = "userId") String userId) {
         var result = this.chargeUseCase.findAllCreateCharge(status, UUID.fromString(userId));
         return ResponseEntity.status(200).body(result);
     }
