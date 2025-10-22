@@ -46,12 +46,22 @@ public class FindAllChargeUseCaseTest {
     }
 
     @Test
-    public void shouldReturnListEmptyIfNotExistCharges() {
+    public void shouldReturnListEmptyIfNotExistChargesTypeUserOriginator() {
         UserEntity user = UserEntity.builder().build();
         when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
         List<ChargeEntity> listMock = new ArrayList<>();
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
         var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.ORIGINATOR);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnListEmptyIfNotExistChargesTypeUserRecipient() {
+        UserEntity user = UserEntity.builder().build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
+        List<ChargeEntity> listMock = new ArrayList<>();
+        when(this.chargeRepository.findAllByRecipientUser(any(), any())).thenReturn(listMock);
+        var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.RECIPIENT);
         assertTrue(result.isEmpty());
     }
 
