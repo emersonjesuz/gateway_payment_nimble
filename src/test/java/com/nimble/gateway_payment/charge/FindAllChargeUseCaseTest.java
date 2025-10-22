@@ -4,7 +4,8 @@ import com.nimble.gateway_payment.ChargeListToMock;
 import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.ChargeUseCase;
-import com.nimble.gateway_payment.charges.Status;
+import com.nimble.gateway_payment.charges.enums.Status;
+import com.nimble.gateway_payment.charges.enums.TypeCharge;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
 import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
@@ -24,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class FindAllCreateChargeUseCaseTest {
+public class FindAllChargeUseCaseTest {
     private final UUID originatorId = UUID.randomUUID();
 
     @Mock
@@ -39,7 +40,7 @@ public class FindAllCreateChargeUseCaseTest {
     @Test
     public void shouldReturnAnErrorIfNotExistsUserWithOriginatorId() {
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> {
-            this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
+            this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.ORIGINATOR);
         });
         assertEquals("User not found.", exception.getMessage());
     }
@@ -50,7 +51,7 @@ public class FindAllCreateChargeUseCaseTest {
         when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
         List<ChargeEntity> listMock = new ArrayList<>();
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
-        var result = this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
+        var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.ORIGINATOR);
         assertTrue(result.isEmpty());
     }
 
@@ -61,7 +62,7 @@ public class FindAllCreateChargeUseCaseTest {
         when(this.userRepository.findById(any())).thenReturn(Optional.of(user1));
         List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data(user1, user1, user2, user2));
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
-        var result = this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
+        var result = this.chargeUseCase.findAllCharge(Status.PENDING, originatorId, TypeCharge.ORIGINATOR);
         assertEquals(4, result.size());
     }
 }
