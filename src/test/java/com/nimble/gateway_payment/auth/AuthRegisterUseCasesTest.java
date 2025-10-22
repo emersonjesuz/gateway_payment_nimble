@@ -1,5 +1,7 @@
 package com.nimble.gateway_payment.auth;
 
+import com.nimble.gateway_payment.accountBank.AccountBankEntity;
+import com.nimble.gateway_payment.accountBank.AccountBankRepository;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.user.UserEntity;
 import com.nimble.gateway_payment.user.UserRepository;
@@ -11,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +27,9 @@ public class AuthRegisterUseCasesTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private AccountBankRepository accountBankRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -104,12 +111,14 @@ public class AuthRegisterUseCasesTest {
                 .name("josi")
                 .password("josi123")
                 .build();
-
+        AccountBankEntity account = AccountBankEntity.builder().amount(BigDecimal.ZERO).users(user).createdAt(LocalDateTime.now()).build();
         when(this.userRepository.findByEmailOrCpf(anyString(), anyString()))
                 .thenReturn(Optional.empty());
         when(this.passwordEncoder.encode(anyString())).thenReturn("hashedPassword");
         when(this.userRepository.save(any(UserEntity.class)))
                 .thenReturn(user);
+        when(this.accountBankRepository.save(any(AccountBankEntity.class)))
+                .thenReturn(account);
 
         assertDoesNotThrow(() -> authUseCase.register(dto));
     }
