@@ -83,4 +83,14 @@ public class FindAllCreateChargeControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message")
                         .value("The value 'INVALID' is not a valid status. Accepted values: PENDING, PAID, CANCELED"));
     }
+
+    @Test
+    public void shouldReturn200AndListCharge() throws Exception {
+        this.mvc.perform(get("/charge/created")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", TestUtils.generatedToken(user1))
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
 }
