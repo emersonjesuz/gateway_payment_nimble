@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.charge;
 
+import com.nimble.gateway_payment.ChargeListToMock;
 import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.ChargeUseCase;
@@ -51,5 +52,15 @@ public class FindAllCreateChargeUseCaseTest {
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
         var result = this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnListCharges() {
+        UserEntity user = UserEntity.builder().build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
+        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data());
+        when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
+        var result = this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
+        assertEquals(3, result.size());
     }
 }
