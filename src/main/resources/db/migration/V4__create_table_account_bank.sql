@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS account_bank (
+    id UUID PRIMARY KEY,
+    cpf VARCHAR(11) NOT NULL UNIQUE,
+    amount NUMERIC(12,2) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+
+    CONSTRAINT fk_users FOREIGN KEY (cpf) REFERENCES users(cpf)
+);
