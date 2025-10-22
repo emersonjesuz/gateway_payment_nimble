@@ -8,39 +8,40 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 public class ChargeListToMock {
-    public static List<ChargeEntity> data() {
+    public static List<ChargeEntity> data(UserEntity originator1, UserEntity originator2, UserEntity recipient1, UserEntity recipient2) {
         return Arrays.asList(
                 ChargeEntity.builder()
-                        .id(UUID.randomUUID())
-                        .amount(new BigDecimal("100.50"))
-                        .description("Payment for order #1001")
-                        .createdAt(LocalDateTime.now().minusDays(2))
+                        .amount(new BigDecimal("150.75"))
+                        .createdAt(LocalDateTime.now().minusDays(3))
                         .status(Status.PENDING)
-                        .originatorUser(UserEntity.builder().build())
-                        .recipientUser(UserEntity.builder().build())
+                        .originatorUser(originator1)
+                        .recipientUser(recipient1)
+                        .build(),
+                ChargeEntity.builder()
+                        .amount(new BigDecimal("300.00"))
+                        .createdAt(LocalDateTime.now().minusDays(2))
+                        .status(Status.PAID)
+                        .originatorUser(originator2)
+                        .recipientUser(recipient2)
                         .build(),
 
                 ChargeEntity.builder()
-                        .id(UUID.randomUUID())
-                        .amount(new BigDecimal("250.00"))
-                        .description("Transfer to user B")
+                        .amount(new BigDecimal("89.99"))
+                        .description("Transfer for subscription")
                         .createdAt(LocalDateTime.now().minusDays(1))
                         .status(Status.PAID)
-                        .originatorUser(UserEntity.builder().build())
-                        .recipientUser(UserEntity.builder().build())
+                        .originatorUser(originator1)
+                        .recipientUser(recipient2)
                         .build(),
-
                 ChargeEntity.builder()
-                        .id(UUID.randomUUID())
-                        .amount(new BigDecimal("75.30"))
-                        .description("Refund for order #982")
+                        .amount(new BigDecimal("500.50"))
+                        .description("Payment")
                         .createdAt(LocalDateTime.now())
-                        .status(Status.CANCELED)
-                        .originatorUser(UserEntity.builder().build())
-                        .recipientUser(UserEntity.builder().build())
+                        .status(Status.PENDING)
+                        .originatorUser(originator2)
+                        .recipientUser(recipient1)
                         .build()
         );
     }

@@ -56,11 +56,12 @@ public class FindAllCreateChargeUseCaseTest {
 
     @Test
     public void shouldReturnListCharges() {
-        UserEntity user = UserEntity.builder().build();
-        when(this.userRepository.findById(any())).thenReturn(Optional.of(user));
-        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data());
+        UserEntity user1 = UserEntity.builder().build();
+        UserEntity user2 = UserEntity.builder().build();
+        when(this.userRepository.findById(any())).thenReturn(Optional.of(user1));
+        List<ChargeEntity> listMock = new ArrayList<>(ChargeListToMock.data(user1, user1, user2, user2));
         when(this.chargeRepository.findAllByOriginatorUser(any(), any())).thenReturn(listMock);
         var result = this.chargeUseCase.findAllCreateCharge(Status.PENDING, originatorId);
-        assertEquals(3, result.size());
+        assertEquals(4, result.size());
     }
 }
