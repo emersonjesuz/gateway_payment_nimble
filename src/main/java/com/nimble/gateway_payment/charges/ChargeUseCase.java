@@ -31,4 +31,8 @@ public class ChargeUseCase {
         charge.setDescription(dto.getDescription() != null ? dto.getDescription() : "");
         this.chargeRepository.save(charge);
     }
+
+    public void findAllCreateCharge(Status status, UUID originatorId) {
+        this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+    }
 }
