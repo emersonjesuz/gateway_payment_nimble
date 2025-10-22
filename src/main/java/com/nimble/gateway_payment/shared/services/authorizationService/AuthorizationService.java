@@ -23,7 +23,7 @@ public class AuthorizationService {
             String url = String.format("https://zsy6tx7aql.execute-api.sa-east-1.amazonaws" +
                     ".com/authorizer?value=%s&cpf=%s&numberCard=%s&exp=%s&cvv=%s", dto.amount(), dto.cpf(), dto.numberCard(), dto.exp(), dto.cvv());
             AuthorizationResponseDto response = restTemplate.getForObject(url, AuthorizationResponseDto.class);
-            if (Objects.equals(response.status(), "fail")) {
+            if (Objects.equals(response.status(), "fail") || !response.data().authorized()) {
                 if (dto.typeTransaction() == TypeTransaction.DEPOSIT) {
                     throw new DepositAuthorizationFailedException();
                 }
