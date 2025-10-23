@@ -10,7 +10,7 @@ public class PaymentByCardValidator {
                 throw new InvalidCardDataException();
             }
 
-            if (!dto.getCardNumber().matches("\\d+") || !dto.getExp().matches("\\d+") || !dto.getCvv().matches("\\d+")) {
+            if (!dto.getCardNumber().matches("\\d+") || !dto.getExp().matches("^[\\d/]+$") || !dto.getCvv().matches("\\d+")) {
                 throw new InvalidCardDataException();
             }
         }
