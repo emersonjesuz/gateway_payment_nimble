@@ -45,7 +45,7 @@ public class AccountBankDepositUseCaseTest {
         DepositInputDto dto = new DepositInputDto(BigDecimal.TEN);
         UserEntity user = UserEntity.builder().build();
         when(this.authorizationService.authorize(any())).thenReturn(true);
-        when(this.accountBankRepository.findByCpf(any())).thenReturn(Optional.empty());
+        when(this.accountBankRepository.findByUsers(any())).thenReturn(Optional.empty());
         InternalServerException exception = assertThrows(InternalServerException.class, () -> {
             this.accountBackUseCase.deposit(dto, user);
         });
@@ -58,7 +58,7 @@ public class AccountBankDepositUseCaseTest {
         UserEntity user = UserEntity.builder().build();
         when(this.authorizationService.authorize(any())).thenReturn(true);
         AccountBankEntity account = AccountBankEntity.builder().amount(BigDecimal.ZERO).build();
-        when(this.accountBankRepository.findByCpf(any())).thenReturn(Optional.of(account));
+        when(this.accountBankRepository.findByUsers(any())).thenReturn(Optional.of(account));
         assertDoesNotThrow(() -> {
             this.accountBackUseCase.deposit(dto, user);
         });
