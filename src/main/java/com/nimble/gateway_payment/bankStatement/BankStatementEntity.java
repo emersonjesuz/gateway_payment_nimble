@@ -3,12 +3,20 @@ package com.nimble.gateway_payment.bankStatement;
 import com.nimble.gateway_payment.accountBank.TypePayment;
 import com.nimble.gateway_payment.charges.ChargeEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "bank_statement")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class BankStatementEntity {
 
     @Id
