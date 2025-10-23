@@ -1,5 +1,6 @@
 package com.nimble.gateway_payment.charges;
 
+import com.nimble.gateway_payment.accountBank.AccountBankRepository;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
 import com.nimble.gateway_payment.charges.dtos.ChargeOutputDto;
 import com.nimble.gateway_payment.charges.enums.Status;
@@ -11,22 +12,22 @@ import com.nimble.gateway_payment.user.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class ChargeUseCase {
     private final UserRepository userRepository;
     private final ChargeRepository chargeRepository;
+    private final AccountBankRepository accountBankRepository;
 
-    public ChargeUseCase(UserRepository userRepository, ChargeRepository chargeRepository) {
+    public ChargeUseCase(UserRepository userRepository, ChargeRepository chargeRepository, AccountBankRepository accountBankRepository) {
         this.chargeRepository = chargeRepository;
         this.userRepository = userRepository;
+        this.accountBankRepository = accountBankRepository;
     }
 
-    public void create(ChargeCreateInputDto dto, UUID originatorId) {
+    public void create(ChargeCreateInputDto dto, UserEntity originatorUser) {
         CpfValidator recipientCpf = new CpfValidator(dto.getRecipientCpf());
         UserEntity recipientUser = this.userRepository.findByCpf(recipientCpf.getValue()).orElseThrow(UserNotFoundException::new);
-        UserEntity originatorUser = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
         OriginatorEqualsRecipientValidator.validate(originatorUser.getCpf(), recipientUser.getCpf());
         ChargeEntity charge = new ChargeEntity();
         charge.setOriginatorUser(originatorUser);
@@ -36,8 +37,7 @@ public class ChargeUseCase {
         this.chargeRepository.save(charge);
     }
 
-    public List<ChargeOutputDto> findAllCharge(Status status, UUID originatorId, TypeCharge typeCharge) {
-        UserEntity user = this.userRepository.findById(originatorId).orElseThrow(UserNotFoundException::new);
+    public List<ChargeOutputDto> findAllCharge(Status status, UserEntity user, TypeCharge typeCharge) {
         List<ChargeEntity> charges;
         if (typeCharge == TypeCharge.ORIGINATOR) {
             charges = this.chargeRepository.findAllByOriginatorUser(user, status);

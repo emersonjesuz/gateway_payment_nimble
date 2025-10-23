@@ -26,19 +26,19 @@ public class ChargeController {
 
     @PostMapping
     private ResponseEntity<ChargeCreateOutputDto> create(@RequestBody @Valid ChargeCreateInputDto body, @AuthenticationPrincipal UserEntity user) {
-        this.chargeUseCase.create(body, user.getId());
+        this.chargeUseCase.create(body, user);
         return ResponseEntity.status(200).body(new ChargeCreateOutputDto("Charge created with success."));
     }
 
     @GetMapping("/created")
     private ResponseEntity<List<ChargeOutputDto>> findAllCreateCharge(@Param("status") Status status, @AuthenticationPrincipal UserEntity user) {
-        var result = this.chargeUseCase.findAllCharge(status, user.getId(), TypeCharge.ORIGINATOR);
+        var result = this.chargeUseCase.findAllCharge(status, user, TypeCharge.ORIGINATOR);
         return ResponseEntity.status(200).body(result);
     }
 
     @GetMapping("/receive")
     private ResponseEntity<List<ChargeOutputDto>> findAllReceiveCharge(@Param("status") Status status, @AuthenticationPrincipal UserEntity user) {
-        var result = this.chargeUseCase.findAllCharge(status, user.getId(), TypeCharge.RECIPIENT);
+        var result = this.chargeUseCase.findAllCharge(status, user, TypeCharge.RECIPIENT);
         return ResponseEntity.status(200).body(result);
     }
 }
