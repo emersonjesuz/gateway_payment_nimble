@@ -22,7 +22,8 @@ public class AccountBankUseCase {
         AuthorizationInputDto authorizationDto =
                 new AuthorizationInputDto(TypeTransaction.DEPOSIT, user.getCpf(), dto.getAmount(), null, null, null);
         this.authorizationService.authorize(authorizationDto);
-        this.accountBankRepository.findByCpf(user.getCpf()).orElseThrow(InternalServerException::new);
-
+        AccountBankEntity account = this.accountBankRepository.findByCpf(user.getCpf()).orElseThrow(InternalServerException::new);
+        account.setAmount(account.getAmount().add(dto.getAmount()));
+        this.accountBankRepository.save(account);
     }
 }
