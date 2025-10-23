@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.accountBank;
 
 import com.nimble.gateway_payment.accountBank.dtos.DepositInputDto;
+import com.nimble.gateway_payment.shared.exceptions.InternalServerException;
 import com.nimble.gateway_payment.shared.services.authorizationService.AuthorizationService;
 import com.nimble.gateway_payment.shared.services.authorizationService.exception.DepositAuthorizationFailedException;
 import com.nimble.gateway_payment.user.UserEntity;
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -37,5 +39,17 @@ public class AccountBankDepositUseCaseTest {
             this.accountBackUseCase.deposit(dto, user);
         });
         assertEquals("Deposit authorization failed. Please verify your payment information.", exception.getMessage());
+    }
+
+    @Test
+    public void shouldReturnErrorIfAccountNotExists() {
+        DepositInputDto dto = new DepositInputDto(BigDecimal.TEN);
+        UserEntity user = UserEntity.builder().build();
+        when(this.authorizationService.authorize(any())).thenReturn(true);
+        when(this.accountBankRepository.findByCpf(any())).thenReturn(Optional.empty());
+        InternalServerException exception = assertThrows(InternalServerException.class, () -> {
+            this.accountBackUseCase.deposit(dto, user);
+        });
+        assertEquals("Server error: account not found", exception.getMessage());
     }
 }
