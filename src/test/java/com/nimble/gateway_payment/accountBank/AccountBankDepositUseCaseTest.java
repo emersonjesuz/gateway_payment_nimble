@@ -14,8 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -51,5 +50,17 @@ public class AccountBankDepositUseCaseTest {
             this.accountBackUseCase.deposit(dto, user);
         });
         assertEquals("Server error: account not found", exception.getMessage());
+    }
+
+    @Test
+    public void shouldNotReturnErrorIfDepositSuccess() {
+        DepositInputDto dto = new DepositInputDto(BigDecimal.TEN);
+        UserEntity user = UserEntity.builder().build();
+        when(this.authorizationService.authorize(any())).thenReturn(true);
+        AccountBankEntity account = AccountBankEntity.builder().amount(BigDecimal.ZERO).build();
+        when(this.accountBankRepository.findByCpf(any())).thenReturn(Optional.of(account));
+        assertDoesNotThrow(() -> {
+            this.accountBackUseCase.deposit(dto, user);
+        });
     }
 }
