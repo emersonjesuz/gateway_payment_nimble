@@ -67,6 +67,16 @@ public class HandlerErrorController {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InternalServerException.class)
+    public ResponseEntity<ErrorResponse> handleInternalServerException(InternalServerException e, WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                LocalDateTime.now(),
+                e.getStatusCode(),
+                e.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e, WebRequest request) {
         ErrorResponse error = new ErrorResponse(
