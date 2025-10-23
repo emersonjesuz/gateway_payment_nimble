@@ -1,7 +1,8 @@
 package com.nimble.gateway_payment.accountBank;
 
+import com.nimble.gateway_payment.accountBank.dtos.AccountBankOutputDto;
 import com.nimble.gateway_payment.accountBank.dtos.DepositInputDto;
-import com.nimble.gateway_payment.accountBank.dtos.DepositOutputDto;
+import com.nimble.gateway_payment.accountBank.dtos.PaymentInputDto;
 import com.nimble.gateway_payment.user.UserEntity;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +22,14 @@ public class AccountBankController {
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<DepositOutputDto> deposit(@RequestBody @Valid DepositInputDto body, @AuthenticationPrincipal UserEntity user) {
+    public ResponseEntity<AccountBankOutputDto> deposit(@RequestBody @Valid DepositInputDto body, @AuthenticationPrincipal UserEntity user) {
         this.accountBackUseCase.deposit(body, user);
-        return ResponseEntity.status(201).body(new DepositOutputDto("Deposit success."));
+        return ResponseEntity.status(201).body(new AccountBankOutputDto("Deposit success."));
+    }
+
+    @PostMapping("/payment")
+    public ResponseEntity<AccountBankOutputDto> payment(@RequestBody @Valid PaymentInputDto body, @AuthenticationPrincipal UserEntity user) {
+        this.accountBackUseCase.payment(body, user);
+        return ResponseEntity.status(201).body(new AccountBankOutputDto("Payment success."));
     }
 }
