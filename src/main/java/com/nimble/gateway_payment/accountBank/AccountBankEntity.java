@@ -31,4 +31,12 @@ public class AccountBankEntity {
     @OneToOne
     @JoinColumn(name = "cpf", referencedColumnName = "cpf", nullable = false, unique = true)
     private UserEntity users;
+
+    public void addAmount(BigDecimal value) {
+        this.amount = this.amount.add(value);
+    }
+
+    public void subtractAmount(BigDecimal value) {
+        this.amount = this.amount.subtract(value);
+    }
 }
