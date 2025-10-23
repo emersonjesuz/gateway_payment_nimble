@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.accountBank;
 
 import com.nimble.gateway_payment.accountBank.dtos.DepositInputDto;
+import com.nimble.gateway_payment.shared.exceptions.InternalServerException;
 import com.nimble.gateway_payment.shared.services.authorizationService.AuthorizationService;
 import com.nimble.gateway_payment.shared.services.authorizationService.TypeTransaction;
 import com.nimble.gateway_payment.shared.services.authorizationService.dtos.AuthorizationInputDto;
@@ -21,5 +22,7 @@ public class AccountBankUseCase {
         AuthorizationInputDto authorizationDto =
                 new AuthorizationInputDto(TypeTransaction.DEPOSIT, user.getCpf(), dto.getAmount(), null, null, null);
         this.authorizationService.authorize(authorizationDto);
+        this.accountBankRepository.findByCpf(user.getCpf()).orElseThrow(InternalServerException::new);
+
     }
 }
