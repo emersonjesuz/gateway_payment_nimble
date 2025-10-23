@@ -3,6 +3,8 @@ package com.nimble.gateway_payment.accountBank;
 import com.nimble.gateway_payment.accountBank.dtos.DepositInputDto;
 import com.nimble.gateway_payment.accountBank.dtos.PaymentInputDto;
 import com.nimble.gateway_payment.accountBank.exceptions.BalanceInsufficientException;
+import com.nimble.gateway_payment.bankStatement.BankStatementEntity;
+import com.nimble.gateway_payment.bankStatement.BankStatementRepository;
 import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.enums.Status;
@@ -15,16 +17,21 @@ import com.nimble.gateway_payment.user.UserEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AccountBankUseCase {
     private final AccountBankRepository accountBankRepository;
     private final AuthorizationService authorizationService;
     private final ChargeRepository chargeRepository;
+    private final BankStatementRepository bankStatementRepository;
 
-    public AccountBankUseCase(AccountBankRepository accountBankRepository, AuthorizationService authorizationService, ChargeRepository chargeRepository) {
+    public AccountBankUseCase(AccountBankRepository accountBankRepository, AuthorizationService authorizationService,
+                              ChargeRepository chargeRepository, BankStatementRepository bankStatementRepository) {
         this.accountBankRepository = accountBankRepository;
         this.authorizationService = authorizationService;
         this.chargeRepository = chargeRepository;
+        this.bankStatementRepository = bankStatementRepository;
     }
 
     public void deposit(DepositInputDto dto, UserEntity user) {
@@ -46,7 +53,7 @@ public class AccountBankUseCase {
 
         if (dto.getTypePayment() == TypePayment.CARD_CREDIT) {
             AuthorizationInputDto authorizationDto =
-                    new AuthorizationInputDto(TypeTransaction.DEPOSIT, user.getCpf(), charge.getAmount(), dto.getCardNumber(), dto.getExp(), dto.getCvv());
+                    new AuthorizationInputDto(TypeTransaction.CARD_CREDIT, user.getCpf(), charge.getAmount(), dto.getCardNumber(), dto.getExp(), dto.getCvv());
             this.authorizationService.authorize(authorizationDto);
             debtorAcc.addAmount(charge.getAmount());
         } else {
@@ -58,7 +65,13 @@ public class AccountBankUseCase {
         }
 
         charge.setStatus(Status.PAID);
+        BankStatementEntity bankStatement = BankStatementEntity.builder()
+                .charge(charge)
+                .typePayment(dto.getTypePayment())
+                .createdAt(LocalDateTime.now())
+                .build();
 
+        this.bankStatementRepository.save(bankStatement);
         this.chargeRepository.save(charge);
         this.accountBankRepository.save(creditorAcc);
         this.accountBankRepository.save(debtorAcc);
