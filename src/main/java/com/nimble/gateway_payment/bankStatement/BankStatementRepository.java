@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface BankStatementRepository extends JpaRepository<BankStatementEntity, UUID> {
-    Optional<BankStatementEntity> findByCharges(ChargeEntity charge);
+    Optional<BankStatementEntity> findByCharge(ChargeEntity charge);
 }

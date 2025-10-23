@@ -20,4 +20,7 @@ public interface ChargeRepository extends JpaRepository<ChargeEntity, UUID> {
     List<ChargeEntity> findAllByRecipientUser(@Param("user") UserEntity user, @Param("status") Status status);
 
     Optional<ChargeEntity> findByIdAndStatusAndRecipientUser(UUID uuid, Status status, UserEntity user);
+
+    Optional<ChargeEntity> findByIdAndStatusNotAndOriginatorUser(UUID id, Status status, UserEntity user);
+
 }
