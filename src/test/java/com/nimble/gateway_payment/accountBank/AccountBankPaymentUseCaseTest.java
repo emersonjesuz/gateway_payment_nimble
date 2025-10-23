@@ -2,6 +2,7 @@ package com.nimble.gateway_payment.accountBank;
 
 import com.nimble.gateway_payment.accountBank.dtos.PaymentInputDto;
 import com.nimble.gateway_payment.accountBank.exceptions.BalanceInsufficientException;
+import com.nimble.gateway_payment.bankStatement.BankStatementRepository;
 import com.nimble.gateway_payment.charges.ChargeEntity;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.enums.Status;
@@ -34,6 +35,9 @@ public class AccountBankPaymentUseCaseTest {
     private AuthorizationService authorizationService;
     @Mock
     private ChargeRepository chargeRepository;
+    
+    @Mock
+    private BankStatementRepository bankStatementRepository;
 
     @InjectMocks
     private AccountBankUseCase accountBankUseCase;

@@ -48,6 +48,8 @@ public class FindAllReceiveChargeControllerTest {
 
     @BeforeAll
     public void beforeAll() {
+        chargeRepository.deleteAll();
+        userRepository.deleteAll();
         user1 = userRepository.saveAndFlush(UserEntity.builder()
                 .cpf("11111111111")
                 .name("João")

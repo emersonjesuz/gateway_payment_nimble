@@ -1,6 +1,7 @@
 package com.nimble.gateway_payment.charge;
 
 import com.nimble.gateway_payment.TestUtils;
+import com.nimble.gateway_payment.accountBank.AccountBankRepository;
 import com.nimble.gateway_payment.auth.dtos.RegisterInputDto;
 import com.nimble.gateway_payment.charges.ChargeRepository;
 import com.nimble.gateway_payment.charges.dtos.ChargeCreateInputDto;
@@ -41,8 +42,11 @@ public class ChargeCreateControllerTest {
 
     @Autowired
     private ChargeRepository chargeRepository;
+
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AccountBankRepository accountBankRepository;
 
     @BeforeEach
     public void setup() {
@@ -51,6 +55,7 @@ public class ChargeCreateControllerTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
         this.chargeRepository.deleteAll();
+        this.accountBankRepository.deleteAll();
         this.userRepository.deleteAll();
     }
 

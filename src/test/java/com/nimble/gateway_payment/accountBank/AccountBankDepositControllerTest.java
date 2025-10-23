@@ -66,7 +66,7 @@ public class AccountBankDepositControllerTest {
                 .build();
         this.createUser(registerDto);
 
-        var a = this.mvc.perform(post("/account/deposit")
+        this.mvc.perform(post("/account/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(TestUtils.objectToJSON(dto))
                         .header("Authorization", TestUtils.generatedToken(this.userMock))
